@@ -1,0 +1,122 @@
+.app-container {
+  min-height: 100vh;
+}
+.content-container {
+  padding: 20px; 
+}
+.sidebar-wrapper{
+  display: grid;
+  grid-template-columns: 30% 1fr;
+}
+.posts-container {
+  background-color: #fff; 
+  padding: 10px;
+  border-radius: 4px; 
+}
+.header {
+  background-color: #f8f8f8;
+  padding: 10px;
+  border-bottom: 1px solid #ddd;
+}
+.sidebar {
+  background-color: #f0f0f0;
+  padding: 20px;
+  border-right: 1px solid #ddd;
+}
+.sidebar h2 {
+  font-size: 24px; 
+  margin-bottom: 15px; 
+  color: #333; 
+}
+.sidebar ul {
+  list-style: none; 
+  padding: 0; 
+}
+.sidebar ul li {
+  margin-bottom: 10px; 
+}
+.sidebar button {
+  background-color: #007bff; 
+  color: white; 
+  border: none; 
+  border-radius: 5px; 
+  padding: 10px 15px; 
+  cursor: pointer; 
+  transition: background-color 0.3s; 
+}
+.sidebar button:hover {
+  background-color: #0056b3; 
+}
+.feed-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 5px;
+  background: #e0e0e0;
+  border-bottom: 1px solid #ccc;
+  cursor: pointer;
+  transition: background 0.3s ease;
+  min-height: 3rem;
+  text-wrap: nowrap;
+  width: 15rem;
+}
+.feed-header:hover {
+  background: #d0d0d0;
+}
+.feed-header h3 {
+  margin: 0;
+  font-size: 16px;
+}
+.feed-header button {
+  display: none;
+  background: none;
+  border: none;
+  color: #ff4d4d;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+.feed-header:hover button {
+  display: block;
+}
+
+
+.rss-item {
+  border: 1px solid #ccc; 
+  border-radius: 5px; 
+  padding: 15px;
+  margin-bottom: 20px;
+  background-color: #ffffff; 
+}
+.rss-item h3 {
+  font-size: 18px; 
+  color: #007bff; 
+  margin: 0; 
+}
+.rss-item h4 {
+  cursor: pointer;
+  margin-bottom: 5px;
+}
+.rss-item div {
+  margin-top: 10px; 
+  color: #555; 
+  line-height: 1.6; 
+}
+img {
+  width: 100%;
+  height: auto;
+  max-width: fit-content;
+  aspect-ratio: 21 / 9;
+  object-fit: contain;
+  object-position: left;
+}
+.rss-item pre {
+  background-color: #1e1e1e; 
+  color: #f8f8f2; 
+  padding: 10px; 
+  border-radius: 3px; 
+  font-family: 'Courier New', Courier, monospace; 
+  overflow: auto; 
+  white-space: pre; 
+  margin: 2rem 0;
+}
