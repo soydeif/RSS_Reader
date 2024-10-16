@@ -1,122 +1,167 @@
 .app-container {
   min-height: 100vh;
+  max-width: 1280px;
+  margin: 0 auto;
 }
 .content-container {
-  padding: 20px; 
+  padding: 20px;
 }
-.sidebar-wrapper{
+.sidebar-wrapper {
   display: grid;
-  grid-template-columns: 30% 1fr;
+  grid-template-columns: 15% 1fr;
+  column-gap: 3rem;
+  transition: all 1s ease;
+}
+.sidebar.active .sidebar-wrapper {
+  grid-template-columns: 15% 1fr 1fr;
+  transition: grid-template-column 1s ease;
 }
 .posts-container {
-  background-color: #fff; 
   padding: 10px;
-  border-radius: 4px; 
+  border-radius: 4px;
+  background-color: #ffffff;
+  overflow: auto;
+  height: 700px;
+  grid-column: 2;
+  transition: width 1s ease;
 }
+
+.post-item-container{
+  grid-column: 3;
+  overflow: auto;  
+  height: 700px;
+  min-height: 600px;
+  transition: width 1s ease;
+}
+
 .header {
-  background-color: #f8f8f8;
   padding: 10px;
   border-bottom: 1px solid #ddd;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
 .sidebar {
-  background-color: #f0f0f0;
   padding: 20px;
-  border-right: 1px solid #ddd;
+  background-color: #ffffff;
+  height: 800px;
 }
-.sidebar h2 {
-  font-size: 24px; 
-  margin-bottom: 15px; 
-  color: #333; 
+.header h2 {
+  font-size: 24px;
+  margin: 15px 0;
+  color: #333;
 }
 .sidebar ul {
-  list-style: none; 
-  padding: 0; 
+  list-style: none;
+  padding: 0;
 }
 .sidebar ul li {
-  margin-bottom: 10px; 
+  margin-bottom: 10px;
 }
 .sidebar button {
-  background-color: #007bff; 
-  color: white; 
-  border: none; 
-  border-radius: 5px; 
-  padding: 10px 15px; 
-  cursor: pointer; 
-  transition: background-color 0.3s; 
-}
-.sidebar button:hover {
-  background-color: #0056b3; 
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  padding: 10px 15px;
+  cursor: pointer;
+  transition: background-color 0.3s;
 }
 .feed-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
   padding: 5px;
-  background: #e0e0e0;
   border-bottom: 1px solid #ccc;
   cursor: pointer;
   transition: background 0.3s ease;
   min-height: 3rem;
-  text-wrap: nowrap;
-  width: 15rem;
+  min-width: 8rem;
 }
-.feed-header:hover {
-  background: #d0d0d0;
+.feed-header.active {
+  color: #4d35c9;
+  font-weight: bold;
+  background-color: #dfdfed;
+  transition: background 0.5s ease;
+  border-radius: 5px;
 }
 .feed-header h3 {
   margin: 0;
   font-size: 16px;
 }
 .feed-header button {
-  display: none;
+  display: block;
   background: none;
+  opacity: 0;
   border: none;
   color: #ff4d4d;
   font-size: 16px;
   cursor: pointer;
 }
-
 .feed-header:hover button {
-  display: block;
+  opacity: 1;
 }
-
-
+.selected.rss-item{
+  padding: 0rem 1rem 2rem 1rem;
+  color: #593fee;
+  text-wrap: pretty;
+  min-height: 600px;
+  border: 0;
+}
+.selected.rss-item h4 {
+  font-size: 2rem;
+  text-align: left;
+  padding: 2rem 0;
+}
 .rss-item {
-  border: 1px solid #ccc; 
-  border-radius: 5px; 
-  padding: 15px;
+  border-bottom: 1px solid #ddd;
+  padding: 10px;
   margin-bottom: 20px;
-  background-color: #ffffff; 
 }
 .rss-item h3 {
-  font-size: 18px; 
-  color: #007bff; 
-  margin: 0; 
+  font-size: 18px;
+  color: #007bff;
+  margin: 0;
 }
 .rss-item h4 {
   cursor: pointer;
   margin-bottom: 5px;
 }
-.rss-item div {
-  margin-top: 10px; 
-  color: #555; 
-  line-height: 1.6; 
+.rss-item span {
+  margin-top: 10px;
+  color: #555;
+  line-height: 1.6;
 }
+
 img {
   width: 100%;
   height: auto;
-  max-width: fit-content;
-  aspect-ratio: 21 / 9;
+  max-width: 600px;
+  aspect-ratio: 16/9;
   object-fit: contain;
   object-position: left;
 }
+figcaption {
+  font-style: italic;
+  font-weight: 700;
+  margin-bottom: 1rem;
+}
 .rss-item pre {
-  background-color: #1e1e1e; 
-  color: #f8f8f2; 
-  padding: 10px; 
-  border-radius: 3px; 
-  font-family: 'Courier New', Courier, monospace; 
-  overflow: auto; 
-  white-space: pre; 
+  background-color: #1e1e1e;
+  color: #f8f8f2;
+  padding: 10px;
+  border-radius: 3px;
+  font-family: 'Courier New', Courier, monospace;
+  overflow: auto;
+  white-space: pre;
   margin: 2rem 0;
+  max-width: 60rem;
+}
+.rss-active {
+  text-wrap: pretty;
+}
+.rss-active a {
+  color: #593fee;
+  font-weight: bold;
+  text-decoration: underline;
 }

@@ -1,7 +1,11 @@
-import { PostsProps } from '../types/RSSFeed';
-import { PostItem } from './PostItem';
+import { PostsProps } from "../types/RSSFeed";
+import PostItem from "./PostItem";
 
-export const Posts: React.FC<PostsProps> = ({ selectedFeedData, activeItemIndex, handleItemClick }) => {
+const Posts: React.FC<PostsProps> = ({
+    selectedFeedData,
+    onItemSelect
+
+}) => {
     if (!selectedFeedData) return null;
 
     return (
@@ -10,10 +14,11 @@ export const Posts: React.FC<PostsProps> = ({ selectedFeedData, activeItemIndex,
                 <PostItem
                     key={idx}
                     item={item}
-                    isActive={activeItemIndex === idx}
-                    onItemClick={() => handleItemClick(idx)}
+                    onItemClick={() => onItemSelect(idx)}
                 />
             ))}
         </div>
     );
 };
+
+export default Posts;

@@ -49,15 +49,17 @@ export const fetchRssFeedAsText = async (
 
     for (let i = 0; i < items.length; i++) {
       const titleElement = items[i].getElementsByTagName("title")[0];
-      const contentElement = isAtom
-        ? items[i].getElementsByTagName("content")[0]
-        : items[i].getElementsByTagName("description")[0];
+      const descriptionElement =
+        items[i].getElementsByTagName("description")[0];
+      const contentElement = items[i].getElementsByTagName("content")[0];
 
       const title = titleElement
         ? titleElement.textContent || "Sin título"
         : "Sin título";
       const description = contentElement
-        ? contentElement.textContent || "Sin descripción disponible"
+        ? contentElement.textContent || "Sin contenido disponible"
+        : descriptionElement
+        ? descriptionElement.textContent || "Sin descripción disponible"
         : "Sin descripción disponible";
 
       result.push({

@@ -1,13 +1,12 @@
-import React, { useState } from 'react';
-import { fetchRssFeedAsText } from '../rssService';
-import { useSelector, useDispatch } from 'react-redux';
-import { RootState } from '../store';
-import { removeFeed } from '../rssSlice';
-import { Posts } from './Posts';
-import { FeedItemPost } from '../types/RSSFeed';
-import { FeedList } from './FeedList';
-
-
+import React, { useState } from "react";
+import { fetchRssFeedAsText } from "../rssService";
+import { useSelector, useDispatch } from "react-redux";
+import { RootState } from "../store";
+import { removeFeed } from "../rssSlice";
+import { FeedItemPost } from "../types/RSSFeed";
+import { FeedList } from "./FeedList";
+import Posts from "./Posts";
+import PostItem from "./PostItem";
 
 const Sidebar: React.FC = () => {
     const feeds = useSelector((state: RootState) => state.rss.source);
@@ -33,6 +32,7 @@ const Sidebar: React.FC = () => {
     const resetActiveFeed = () => {
         setActiveFeedIndex(null);
         setSelectedFeedData(null);
+        setActiveItemIndex(null);
     };
 
     const handleItemClick = (index: number) => {
@@ -47,9 +47,8 @@ const Sidebar: React.FC = () => {
     };
 
     return (
-        <div className='sidebar'>
-            <h2>Feeds RSS</h2>
-            <div className='sidebar-wrapper'>
+        <div className={`sidebar ${activeItemIndex !== null ? 'active' : ''}`}>
+            <div className="sidebar-wrapper">
                 <FeedList
                     feeds={feeds}
                     activeFeedIndex={activeFeedIndex}
@@ -59,15 +58,21 @@ const Sidebar: React.FC = () => {
                 {activeFeedIndex !== null && selectedFeedData && (
                     <Posts
                         selectedFeedData={selectedFeedData}
-                        activeItemIndex={activeItemIndex}
-                        handleItemClick={handleItemClick}
+                        onItemSelect={handleItemClick}
                     />
+                )}
+                {activeItemIndex !== null && selectedFeedData && selectedFeedData[activeItemIndex] && (
+                    <div className="post-item-container">
+                        <PostItem
+                            item={selectedFeedData[activeItemIndex]}
+                            isActive={true}
+                            onItemClick={() => setActiveItemIndex(null)}
+                        />
+                    </div>
                 )}
             </div>
         </div>
     );
 };
-
-
 
 export default Sidebar;
