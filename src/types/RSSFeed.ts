@@ -9,27 +9,34 @@ export interface RSSFeed {
   title: string;
   items: RSSItem[];
 }
+
 export interface FeedListProps {
   feeds: Array<{ id: string; title: string; url: string }>;
-  activeFeedIndex: number | null | string;
+  activeFeedIndex: number | null;
   onFeedClick: (url: string, index: number) => void;
   onDeleteFeed: (feedId: string) => void;
 }
+
 export interface PostItemProps {
   item: {
     title: string;
     description: string;
     feedTitle: string;
   };
-  isActive?: boolean | string | undefined;
-  onItemClick: () => void;
-  activeItemIndex?: string | null;
+  isActive?: boolean;
+  isActivated?: boolean;
+  onItemClick?: () => void;
+  onItemActivate?: () => void;
 }
 
 export interface PostsProps {
   selectedFeedData: FeedItemPost[] | null;
+  activeItemIndex?: number | null;
+  activatedItemIndex?: number | null;
   onItemSelect: (index: number) => void;
+  onItemActivate: (index: number | null) => void;
 }
+
 export type FeedItemPost = {
   title: string;
   description: string;
