@@ -1,4 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
+import { v4 as uuidv4 } from "uuid";
+
 export const fetchRssFeedAsText = async (
   url: string
 ): Promise<any[] | null> => {
@@ -49,23 +51,49 @@ export const fetchRssFeedAsText = async (
 
     for (let i = 0; i < items.length; i++) {
       const titleElement = items[i].getElementsByTagName("title")[0];
-      const descriptionElement =
+      const contentElement =
+        items[i].getElementsByTagName("content")[0] ||
+        items[i].getElementsByTagName("summary")[0] ||
         items[i].getElementsByTagName("description")[0];
-      const contentElement = items[i].getElementsByTagName("content")[0];
 
       const title = titleElement
         ? titleElement.textContent || "Sin título"
         : "Sin título";
+
       const description = contentElement
         ? contentElement.textContent || "Sin contenido disponible"
-        : descriptionElement
-        ? descriptionElement.textContent || "Sin descripción disponible"
         : "Sin descripción disponible";
 
+      let videoId = "";
+      let videoUrl = "";
+      let thumbnailUrl = "";
+
+      const mediaContentElement =
+        items[i].getElementsByTagName("media:content")[0];
+      if (mediaContentElement) {
+        thumbnailUrl = mediaContentElement.getAttribute("url") || "";
+      }
+
+      const mediaElement = items[i].getElementsByTagName("media:group")[0];
+      if (mediaElement && !thumbnailUrl) {
+        videoId =
+          items[i].getElementsByTagName("yt:videoId")[0]?.textContent || "";
+        videoUrl =
+          items[i].getElementsByTagName("link")[0]?.getAttribute("href") || "";
+        thumbnailUrl =
+          mediaElement
+            .getElementsByTagName("media:thumbnail")[0]
+            ?.getAttribute("url") || "";
+      }
+
       result.push({
+        id: uuidv4(),
         title,
         description,
         feedTitle,
+        videoId,
+        videoUrl,
+        thumbnailUrl,
       });
     }
 

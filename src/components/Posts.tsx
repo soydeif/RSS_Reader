@@ -1,6 +1,6 @@
-import React from "react";
-import { PostsProps } from "../types/RSSFeed";
-import PostItem from "./PostItem";
+import React from 'react';
+import PostItem from './PostItem';
+import { PostsProps } from '../types/RSSFeed';
 
 const Posts: React.FC<PostsProps> = ({
     selectedFeedData,
@@ -8,10 +8,8 @@ const Posts: React.FC<PostsProps> = ({
     onItemSelect,
     onItemActivate,
 }) => {
-    if (!selectedFeedData) return null;
-
     return (
-        <div className="posts-container">
+        <>
             {selectedFeedData.map((item, idx) => (
                 <PostItem
                     key={idx}
@@ -27,7 +25,7 @@ const Posts: React.FC<PostsProps> = ({
                     }}
                 />
             ))}
-        </div>
+        </>
     );
 };
 

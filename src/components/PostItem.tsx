@@ -5,11 +5,11 @@ import { PostItemProps } from "../types/RSSFeed";
 
 const PostItem: React.FC<PostItemProps> = ({
     item,
-    isActive,
     isActivated,
     onItemClick = () => { },
     onItemActivate = () => { },
 }) => {
+
     const modifyLinks = (html: string) => {
         const sanitizedHTML = DOMPurify.sanitize(html, {
             USE_PROFILES: { html: true },
@@ -29,15 +29,31 @@ const PostItem: React.FC<PostItemProps> = ({
         onItemActivate();
     };
 
+
+    const renderVideo = (videoId: string) => {
+        if (videoId) {
+            return (
+                <div className="video-container">
+                    <iframe
+                        width="400"
+                        height="315"
+                        src={`https://www.youtube.com/embed/${videoId}`}
+                        title="Video"
+                        allowFullScreen
+                    />
+                </div>
+            );
+        }
+        return null;
+    };
+
     return (
-        <div
-            className={`rss-item ${isActive ? "selected" : ""} ${isActivated ? "activated" : ""}`}
-            onClick={handleClick}
-        >
+        <div className={`rss-item ${isActivated ? "activated" : ""}`} onClick={handleClick}>
             <h4>{item.title}</h4>
-            {isActive && (
+            {isActivated && (
                 <div className="rss-active">
                     <span>{modifyLinks(item.description)}</span>
+                    {item.videoId && renderVideo(item.videoId)}
                 </div>
             )}
         </div>
@@ -45,3 +61,4 @@ const PostItem: React.FC<PostItemProps> = ({
 };
 
 export default PostItem;
+

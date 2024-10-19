@@ -15,6 +15,7 @@ export interface FeedListProps {
   activeFeedIndex: number | null;
   onFeedClick: (url: string, index: number) => void;
   onDeleteFeed: (feedId: string) => void;
+  selectedFeedData: FeedItemPost[] | null;
 }
 
 export interface PostItemProps {
@@ -22,6 +23,7 @@ export interface PostItemProps {
     title: string;
     description: string;
     feedTitle: string;
+    videoId?: string;
   };
   isActive?: boolean;
   isActivated?: boolean;
@@ -30,16 +32,18 @@ export interface PostItemProps {
 }
 
 export interface PostsProps {
-  selectedFeedData: FeedItemPost[] | null;
-  activeItemIndex?: number | null;
-  activatedItemIndex?: number | null;
+  selectedFeedData: FeedItemPost[];
+  activatedItemIndex: number | null;
   onItemSelect: (index: number) => void;
   onItemActivate: (index: number | null) => void;
 }
 
 export type FeedItemPost = {
+  id: string;
   title: string;
   description: string;
   content: string;
   feedTitle: string;
+  videoId?: string;
+  thumbnailUrl?: string;
 };

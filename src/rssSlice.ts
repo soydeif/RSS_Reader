@@ -14,8 +14,8 @@ export const initialState: RSSState = {
   source: [
     {
       id: uuidv4(),
-      title: "Mozilla Hacks",
-      url: "https://hacks.mozilla.org/feed/",
+      title: "The Verge",
+      url: "https://www.theverge.com/rss/index.xml",
     },
   ],
 };

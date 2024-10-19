@@ -1,99 +1,70 @@
-import React, { useState, useEffect } from "react";
-import { fetchRssFeedAsText } from "../rssService";
-import { useSelector, useDispatch } from "react-redux";
-import { RootState } from "../store";
-import { removeFeed } from "../rssSlice";
-import { FeedItemPost } from "../types/RSSFeed";
-import { FeedList } from "./FeedList";
-import Posts from "./Posts";
-import PostItem from "./PostItem";
+import React from 'react';
+import { FeedItemPost } from '../types/RSSFeed';
+import { HeartOutlined, HeartTwoTone } from '@ant-design/icons';
+import DOMPurify from "dompurify";
+import parse from "html-react-parser";
 
-const Sidebar: React.FC = () => {
-    const feeds = useSelector((state: RootState) => state.rss.source);
-    const dispatch = useDispatch();
+interface SidebarProps {
+    selectedFeedData: FeedItemPost[];
+    savedPosts: FeedItemPost[];
+    onSavePost: (post: FeedItemPost) => void;
+}
 
-    const [selectedFeedData, setSelectedFeedData] = useState<FeedItemPost[] | null>(null);
-    const [activeFeedIndex, setActiveFeedIndex] = useState<number | null>(null);
-    const [activeItemIndex, setActiveItemIndex] = useState<number | null>(null);
-    const [activatedItemIndex, setActivatedItemIndex] = useState<number | null>(null);
 
-    const resetActiveFeed = () => {
-        setActiveFeedIndex(null);
-        setSelectedFeedData(null);
-        setActiveItemIndex(null);
-        setActivatedItemIndex(null);
-    };
-
-    const handleFeedClick = async (url: string, index: number) => {
-        if (activeFeedIndex === index) {
-            resetActiveFeed();
-        } else {
-            const data = await fetchRssFeedAsText(url);
-            if (data) {
-                setSelectedFeedData(data);
-                setActiveFeedIndex(index);
-                setActiveItemIndex(null);
-                setActivatedItemIndex(null);
-            }
-        }
-    };
-
-    const handleItemClick = (index: number) => {
-        if (activeItemIndex === index) {
-            setActiveItemIndex(null);
-            setActivatedItemIndex(null);
-        } else {
-            setActiveItemIndex(index);
-            setActivatedItemIndex(index);
-        }
-    };
-
-    useEffect(() => {
-        if (activeItemIndex === null) {
-            setActivatedItemIndex(null);
-        }
-    }, [activeItemIndex]);
-
-    const handleDeleteFeed = (feedId: string) => {
-        dispatch(removeFeed(feedId));
-        if (activeFeedIndex !== null && feeds[activeFeedIndex].id === feedId) {
-            resetActiveFeed();
-        }
-    };
-
-    const handleItemActivate = (index: number | null) => {
-        setActivatedItemIndex(index);
+const Sidebar: React.FC<SidebarProps> = ({ selectedFeedData, savedPosts, onSavePost }) => {
+    const modifyLinks = (html: string) => {
+        const sanitizedHTML = DOMPurify.sanitize(html, {
+            USE_PROFILES: { html: true },
+        });
+        return parse(sanitizedHTML, {
+            replace: (domNode) => {
+                if (domNode.type === "tag" && domNode.name === "a") {
+                    domNode.attribs.target = "_blank";
+                    domNode.attribs.rel = "noopener noreferrer";
+                }
+            },
+        });
     };
 
     return (
-        <div className={`sidebar ${activeItemIndex !== null ? 'active' : ''}`}>
-            <div className="sidebar-wrapper">
-                <FeedList
-                    feeds={feeds}
-                    activeFeedIndex={activeFeedIndex}
-                    onFeedClick={handleFeedClick}
-                    onDeleteFeed={handleDeleteFeed}
-                />
-                {activeFeedIndex !== null && selectedFeedData && (
-                    <Posts
-                        selectedFeedData={selectedFeedData}
-                        activeItemIndex={activeItemIndex}
-                        activatedItemIndex={activatedItemIndex}
-                        onItemSelect={handleItemClick}
-                        onItemActivate={handleItemActivate}
-                    />
-                )}
-                {activeItemIndex !== null && selectedFeedData && (
-                    <div className="post-item-container">
-                        <PostItem
-                            item={selectedFeedData[activeItemIndex]}
-                            isActive={true}
-                        />
+        <div>
+            {selectedFeedData.map((post, index) => {
+                const isSaved = savedPosts.some(savedPost => savedPost.id === post.id);
+                return (
+                    <div key={index} style={{
+                        marginBottom: '16px',
+                        padding: '12px',
+                        border: '1px solid #eaeaea',
+                        borderRadius: '8px',
+                        background: '#f9f9f9',
+                        display: 'flex',
+                        flexDirection: 'column',
+                        maxWidth: '845px'
+                    }}
+                        className='rss-item'
+                    >
+                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }} className="headline">
+                            <h4 style={{ margin: 0 }}>{modifyLinks(post.title)}</h4>
+                            {isSaved ? (
+                                <HeartTwoTone
+                                    onClick={() => onSavePost(post)}
+                                    twoToneColor="#eb2f96"
+                                    style={{ fontSize: '24px', cursor: 'pointer' }}
+                                />
+                            ) : (
+                                <HeartOutlined
+                                    onClick={() => onSavePost(post)}
+                                    style={{ fontSize: '24px', cursor: 'pointer' }}
+                                />
+                            )}
+                        </div>
+                        {post?.thumbnailUrl && <img src={post?.thumbnailUrl} alt={post?.title} loading='lazy' />}
+                        <p style={{ marginTop: '8px' }}>{modifyLinks(post.description)}</p>
                     </div>
-                )}
-            </div>
+                );
+            })}
         </div>
     );
 };
 
-export default Sidebar;
+export default Sidebar; 
