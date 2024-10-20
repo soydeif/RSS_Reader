@@ -2,24 +2,42 @@ import React, { useState, useEffect } from 'react';
 import "./reset.css";
 import "./global.css";
 import Sidebar from "./components/Sidebar";
-import { MenuFoldOutlined, MenuUnfoldOutlined, BookOutlined, HomeOutlined, ProfileOutlined } from '@ant-design/icons';
-import { Layout, Button, Menu } from 'antd';
-import { fetchRssFeedAsText } from './rssService';
-import { useSelector } from 'react-redux';
-import { RootState } from './store';
+import { MenuFoldOutlined, MenuUnfoldOutlined, BookOutlined, ProfileOutlined } from '@ant-design/icons';
+import { Layout, Button, Menu, Skeleton, Alert } from 'antd';
+import { useFetchNews, Article } from './hooks/useFetchNews';
 import { FeedItemPost } from './types/RSSFeed';
 import Searchbar from './components/Searchbar';
 
 const { Header, Content, Footer, Sider } = Layout;
 
+const categories = [
+  { key: 'business', label: 'Business' },
+  { key: 'entertainment', label: 'Entertainment' },
+  { key: 'general', label: 'General' },
+  { key: 'health', label: 'Health' },
+  { key: 'science', label: 'Science' },
+  { key: 'sports', label: 'Sports' },
+  { key: 'technology', label: 'Technology' }
+];
+
+const mapArticleToFeedItemPost = (article: Article): FeedItemPost => ({
+  id: article.url,
+  title: article.title,
+  description: article.description,
+  content: article.content || '',
+  link: article.url,
+  thumbnailUrl: article.urlToImage || '',
+  feedTitle: article.source.name,
+  publishedAt: article.publishedAt,
+  author: article?.author,
+});
+
 const App: React.FC = () => {
   const [collapsed, setCollapsed] = useState(false);
-  const [activeFeedIndex, setActiveFeedIndex] = useState<number | null>(null);
-  const [selectedFeedData, setSelectedFeedData] = useState<FeedItemPost[] | null>(null);
-  const [dashboardData, setDashboardData] = useState<FeedItemPost[]>([]);
   const [savedPosts, setSavedPosts] = useState<FeedItemPost[]>([]);
+  const [selectedCategory, setSelectedCategory] = useState<string | null>('general');
 
-  const feeds = useSelector((state: RootState) => state.rss.source);
+  const { news, loading, error } = useFetchNews(selectedCategory || 'general');
 
   useEffect(() => {
     const storedPosts = localStorage.getItem("savedPosts");
@@ -32,44 +50,18 @@ const App: React.FC = () => {
     localStorage.setItem("savedPosts", JSON.stringify(savedPosts));
   }, [savedPosts]);
 
-  const handleFeedClick = async (url: string, index: number) => {
-    if (activeFeedIndex === index) {
-      setActiveFeedIndex(null);
-      setSelectedFeedData(null);
-    } else {
-      const data = await fetchRssFeedAsText(url);
-      setSelectedFeedData(data || []);
-      setActiveFeedIndex(index);
-    }
+  const handleCategoryClick = (categoryKey: string) => {
+    setSelectedCategory(categoryKey);
   };
-
-  const handleDashboardClick = async () => {
-    const news: FeedItemPost[] = [];
-
-    for (const feed of feeds) {
-      const data = await fetchRssFeedAsText(feed.url);
-      if (data) {
-        const latestPosts = data.slice(0, 2);
-        news.push(...latestPosts);
-      }
-    }
-
-    setDashboardData(news);
-    setActiveFeedIndex(null);
-  };
-
 
   const handleSavePost = (post: FeedItemPost) => {
     setSavedPosts((prev) => {
       const isAlreadySaved = prev.some(item => item.id === post.id);
-
-      if (isAlreadySaved) {
-        return prev.filter(item => item.id !== post.id);
-      } else {
-        return [...prev, post];
-      }
+      return isAlreadySaved ? prev.filter(item => item.id !== post.id) : [...prev, post];
     });
   };
+
+  const feedData: FeedItemPost[] = news.map(mapArticleToFeedItemPost);
 
   return (
     <Layout style={{ minHeight: '100vh' }}>
@@ -96,21 +88,18 @@ const App: React.FC = () => {
         <Menu
           theme="light"
           mode="inline"
-          selectedKeys={[activeFeedIndex !== null ? activeFeedIndex.toString() : '']}
+          selectedKeys={[selectedCategory || '']}
           style={{ background: '#dfdaf9ba' }}
         >
-          <Menu.Item key="dashboard" onClick={handleDashboardClick}>
-            <HomeOutlined />
-            <span style={{ marginLeft: 8 }}>Dashboard</span>
-          </Menu.Item>
-          <Menu.SubMenu key="feeds" icon={<ProfileOutlined />} title="Feeds">
-            {feeds?.map((feed, index) => (
-              <Menu.Item key={index.toString()} onClick={() => handleFeedClick(feed.url, index)}>
-                {feed.title}
+          <Menu.SubMenu key="Categories" icon={<ProfileOutlined />} title="Categories">
+            {categories.map((category) => (
+              <Menu.Item key={category.key}
+                onClick={() => handleCategoryClick(category.key)}>
+                <span>{category.label}</span>
               </Menu.Item>
             ))}
           </Menu.SubMenu>
-          {/* Agregar menú para elementos guardados */}
+
           <Menu.SubMenu key="saved" icon={<BookOutlined />} title="Saved">
             {savedPosts.map((post, index) => (
               <Menu.Item key={index.toString()}>
@@ -126,18 +115,15 @@ const App: React.FC = () => {
       <Layout>
         <div style={{ minHeight: '45px' }} />
         <Content style={{ margin: '0 16px' }}>
-          <div
-            style={{
-              borderRadius: 8,
-              minHeight: 360,
-            }}
-          >
-            {activeFeedIndex !== null && selectedFeedData ? (
-              <Sidebar selectedFeedData={selectedFeedData} onSavePost={handleSavePost} savedPosts={savedPosts} />
-            ) : dashboardData.length > 0 ? (
-              <Sidebar selectedFeedData={dashboardData} onSavePost={handleSavePost} savedPosts={savedPosts} />
+          <div style={{ borderRadius: 8, minHeight: 360 }}>
+            {loading ? (
+              <Skeleton active paragraph={{ rows: 4 }} />
+            ) : error ? (
+              <Alert message="Error al cargar las noticias" type="error" showIcon />
+            ) : feedData.length > 0 ? (
+              <Sidebar selectedFeedData={feedData} onSavePost={handleSavePost} savedPosts={savedPosts} />
             ) : (
-              <p>Select a feed or Dashboard to display posts</p>
+              <p>Selecciona una categoría para mostrar noticias</p>
             )}
           </div>
         </Content>

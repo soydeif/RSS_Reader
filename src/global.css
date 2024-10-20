@@ -274,7 +274,7 @@
 .rss-item {
   border-bottom: 1px solid #ddd;
   padding: 10px;
-  margin-bottom: 20px;
+  margin-bottom: 5px;
   min-height: 3rem;
   cursor: pointer;
   line-height: 1.6;
@@ -294,9 +294,8 @@
 img {
   width: 100%;
   height: auto;
-  max-width: 600px;
   aspect-ratio: 16/9;
-  object-fit: contain;
+  object-fit: cover;
   object-position: left;
 }
 
@@ -424,4 +423,8 @@ figcaption {
 .video-container iframe{
   aspect-ratio: 16 / 9;
     width: 100%;
+}
+.ant-image-preview-img-wrapper > img {
+  object-position: center;
+  width: fit-content;
 }

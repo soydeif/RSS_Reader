@@ -46,4 +46,8 @@ export type FeedItemPost = {
   feedTitle: string;
   videoId?: string;
   thumbnailUrl?: string;
+  link?: string;
+  url?: string;
+  publishedAt?: string;
+  author?: string;
 };
