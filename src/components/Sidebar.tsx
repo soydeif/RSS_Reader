@@ -83,7 +83,7 @@ const Sidebar: React.FC<SidebarProps> = ({ selectedFeedData, savedPosts, onSaveP
                                 <h4 style={{ margin: 0, fontSize: '16px' }}>{modifyLinks(post.title)}</h4>
                                 <p style={{ marginTop: '4px', fontSize: '14px' }}>{modifyLinks(post.description)}</p>
                             </div>
-                            <div style={{ cursor: 'pointer', padding: '1rem' }} onClick={(e) => { e.stopPropagation(); onSavePost(post); }}>
+                            <div style={{ cursor: 'pointer', padding: '0 1rem', alignSelf: 'self-start' }} onClick={(e) => { e.stopPropagation(); onSavePost(post); }}>
                                 {isSaved ? (
                                     <Icon name="save" />
                                 ) : (

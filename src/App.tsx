@@ -3,7 +3,7 @@ import "./reset.css";
 import "./global.css";
 import Sidebar from "./components/Sidebar";
 import { MenuFoldOutlined, MenuUnfoldOutlined, BookOutlined, ProfileOutlined } from '@ant-design/icons';
-import { Layout, Button, Menu, Skeleton, Alert, Collapse } from 'antd';
+import { Layout, Button, Menu, Skeleton, Alert } from 'antd';
 import { useFetchNews, Article } from './hooks/useFetchNews';
 import { FeedItemPost } from './types/RSSFeed';
 import Searchbar from './components/Searchbar';
@@ -125,14 +125,14 @@ const App: React.FC = () => {
             ))}
           </Menu.SubMenu>
 
-          <Menu.SubMenu key="saved" icon={<BookOutlined />} title="Saved" onClick={() => setViewSaved(true)} disabled={savedPosts.length === 0}>
+          <Menu.SubMenu key="saved" icon={<BookOutlined />} title="Saved" onClick={() => { setViewSaved(true); setSearchTerm('') }} disabled={savedPosts.length === 0}>
             <Menu.Item key="list"  >
               <span>Recently added</span>
             </Menu.Item>
           </Menu.SubMenu>
         </Menu>
 
-        <Searchbar collapsed={collapsed} onSearch={setSearchTerm} />
+
       </Sider>
 
       <Layout>
@@ -140,23 +140,27 @@ const App: React.FC = () => {
         <Content style={{ margin: '0 16px' }}>
           <div style={{ borderRadius: 8, minHeight: 360 }}>
             {loading ? (
-              <Skeleton active paragraph={{ rows: 4 }} />
+              <Skeleton active paragraph={{ rows: 10 }} />
             ) : error ? (
               <Alert message="Error al cargar las noticias" type="error" showIcon />
             ) : searchTerm ? (
               Object.keys(filteredGroupedPosts).length > 0 ? (
-                <Collapse>
-                  {Object.entries(filteredGroupedPosts).map(([category, posts]) => (
-                    <Collapse.Panel header={category} key={category}>
+                <>
+                  {Object.entries(filteredGroupedPosts).map(([, posts]) => (
+                    <>
+                      <Searchbar collapsed={collapsed} onSearch={setSearchTerm} />
                       <Sidebar selectedFeedData={posts} onSavePost={handleSavePost} savedPosts={savedPosts} pagination={false} />
-                    </Collapse.Panel>
+                    </>
                   ))}
-                </Collapse>
+                </>
               ) : (
                 <p>No se encontraron resultados.</p>
               )
             ) : (
-              <Sidebar selectedFeedData={filteredPosts} onSavePost={handleSavePost} savedPosts={savedPosts} />
+              <>
+                <Searchbar collapsed={collapsed} onSearch={setSearchTerm} />
+                <Sidebar selectedFeedData={filteredPosts} onSavePost={handleSavePost} savedPosts={savedPosts} />
+              </>
             )}
 
 
