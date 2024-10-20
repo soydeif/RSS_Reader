@@ -50,4 +50,5 @@ export type FeedItemPost = {
   url?: string;
   publishedAt?: string;
   author?: string;
+  category?: string;
 };

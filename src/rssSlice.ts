@@ -26,12 +26,12 @@ const rssSlice = createSlice({
   reducers: {
     addFeed: (
       state,
-      action: PayloadAction<{ title: string; url: string; content?: string }>
+      action: PayloadAction<{ title: string; url?: string; content?: string }>
     ) => {
       state.source.push({
         id: uuidv4(),
         title: action.payload.title,
-        url: action.payload.url,
+        url: action.payload.url || "",
         content: action.payload.content,
       });
     },

@@ -3,10 +3,12 @@ import "./reset.css";
 import "./global.css";
 import Sidebar from "./components/Sidebar";
 import { MenuFoldOutlined, MenuUnfoldOutlined, BookOutlined, ProfileOutlined } from '@ant-design/icons';
-import { Layout, Button, Menu, Skeleton, Alert } from 'antd';
+import { Layout, Button, Menu, Skeleton, Alert, Collapse } from 'antd';
 import { useFetchNews, Article } from './hooks/useFetchNews';
 import { FeedItemPost } from './types/RSSFeed';
 import Searchbar from './components/Searchbar';
+import { store } from './store';
+import { addFeed, removeFeed } from './rssSlice';
 
 const { Header, Content, Footer, Sider } = Layout;
 
@@ -20,7 +22,7 @@ const categories = [
   { key: 'technology', label: 'Technology' }
 ];
 
-const mapArticleToFeedItemPost = (article: Article): FeedItemPost => ({
+const mapArticleToFeedItemPost = (article: Article, category: string): FeedItemPost => ({
   id: article.url,
   title: article.title,
   description: article.description,
@@ -30,21 +32,20 @@ const mapArticleToFeedItemPost = (article: Article): FeedItemPost => ({
   feedTitle: article.source.name,
   publishedAt: article.publishedAt,
   author: article?.author,
+  category,
 });
 
 const App: React.FC = () => {
   const [collapsed, setCollapsed] = useState(false);
-  const [savedPosts, setSavedPosts] = useState<FeedItemPost[]>([]);
+  const [savedPosts, setSavedPosts] = useState<FeedItemPost[]>(() => {
+    const savedPostsFromStorage = localStorage.getItem("savedPosts");
+    return savedPostsFromStorage ? JSON.parse(savedPostsFromStorage) : [];
+  });
   const [selectedCategory, setSelectedCategory] = useState<string | null>('general');
+  const [viewSaved, setViewSaved] = useState(false);
+  const [searchTerm, setSearchTerm] = useState<string>("");
 
   const { news, loading, error } = useFetchNews(selectedCategory || 'general');
-
-  useEffect(() => {
-    const storedPosts = localStorage.getItem("savedPosts");
-    if (storedPosts) {
-      setSavedPosts(JSON.parse(storedPosts));
-    }
-  }, []);
 
   useEffect(() => {
     localStorage.setItem("savedPosts", JSON.stringify(savedPosts));
@@ -52,16 +53,40 @@ const App: React.FC = () => {
 
   const handleCategoryClick = (categoryKey: string) => {
     setSelectedCategory(categoryKey);
+    setViewSaved(false);
+    setSearchTerm('');
   };
 
   const handleSavePost = (post: FeedItemPost) => {
     setSavedPosts((prev) => {
       const isAlreadySaved = prev.some(item => item.id === post.id);
-      return isAlreadySaved ? prev.filter(item => item.id !== post.id) : [...prev, post];
+      if (isAlreadySaved) {
+        const newPosts = prev.filter(item => item.id !== post.id);
+        store.dispatch(removeFeed(post.id));
+        return newPosts;
+      } else {
+        store.dispatch(addFeed({ title: post.title, url: post.link }));
+        return [...prev, post];
+      }
     });
   };
 
-  const feedData: FeedItemPost[] = news.map(mapArticleToFeedItemPost);
+  const filteredPosts = viewSaved
+    ? savedPosts.filter(post => post.title.toLowerCase().includes(searchTerm.toLowerCase()))
+    : news.map(article => mapArticleToFeedItemPost(article, selectedCategory || 'general'));
+
+
+  const groupedPosts = (posts: FeedItemPost[]) => {
+    return categories.reduce((acc, category) => {
+      const filteredByCategory = posts.filter(post => post.title.toLowerCase().includes(searchTerm.toLowerCase()) && post.category === category.key);
+      if (filteredByCategory.length > 0) {
+        acc[category.label] = filteredByCategory;
+      }
+      return acc;
+    }, {} as Record<string, FeedItemPost[]>);
+  };
+
+  const filteredGroupedPosts = groupedPosts(filteredPosts);
 
   return (
     <Layout style={{ minHeight: '100vh' }}>
@@ -100,16 +125,14 @@ const App: React.FC = () => {
             ))}
           </Menu.SubMenu>
 
-          <Menu.SubMenu key="saved" icon={<BookOutlined />} title="Saved">
-            {savedPosts.map((post, index) => (
-              <Menu.Item key={index.toString()}>
-                {post.title}
-              </Menu.Item>
-            ))}
+          <Menu.SubMenu key="saved" icon={<BookOutlined />} title="Saved" onClick={() => setViewSaved(true)} disabled={savedPosts.length === 0}>
+            <Menu.Item key="list"  >
+              <span>Recently added</span>
+            </Menu.Item>
           </Menu.SubMenu>
         </Menu>
 
-        <Searchbar collapsed={collapsed} />
+        <Searchbar collapsed={collapsed} onSearch={setSearchTerm} />
       </Sider>
 
       <Layout>
@@ -120,11 +143,23 @@ const App: React.FC = () => {
               <Skeleton active paragraph={{ rows: 4 }} />
             ) : error ? (
               <Alert message="Error al cargar las noticias" type="error" showIcon />
-            ) : feedData.length > 0 ? (
-              <Sidebar selectedFeedData={feedData} onSavePost={handleSavePost} savedPosts={savedPosts} />
+            ) : searchTerm ? (
+              Object.keys(filteredGroupedPosts).length > 0 ? (
+                <Collapse>
+                  {Object.entries(filteredGroupedPosts).map(([category, posts]) => (
+                    <Collapse.Panel header={category} key={category}>
+                      <Sidebar selectedFeedData={posts} onSavePost={handleSavePost} savedPosts={savedPosts} pagination={false} />
+                    </Collapse.Panel>
+                  ))}
+                </Collapse>
+              ) : (
+                <p>No se encontraron resultados.</p>
+              )
             ) : (
-              <p>Selecciona una categoría para mostrar noticias</p>
+              <Sidebar selectedFeedData={filteredPosts} onSavePost={handleSavePost} savedPosts={savedPosts} />
             )}
+
+
           </div>
         </Content>
         <Footer style={{ textAlign: 'center', color: '#502dc8', fontWeight: 'bold' }}>

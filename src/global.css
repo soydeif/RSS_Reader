@@ -241,8 +241,12 @@
 .feed-header:hover button {
   opacity: 1;
 }
-
-.headline{
+.headline a{
+  color: #593fee;
+  font-weight: bold;
+  font-size: 1rem;
+}
+.headline {
   color: #593fee;
   font-weight: bold;
   font-size: 1rem;
