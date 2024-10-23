@@ -81,7 +81,6 @@ export const FeedList: React.FC<FeedListProps> = ({
         <div>
             {confirmDeleteFeedId && (
                 <>
-
                     <Modal title="Aviso" open={isModalOpen} onOk={confirmDelete} onCancel={cancelDelete} >
                         <ExclamationCircleOutlined />
                         <p>Estás a punto de eliminar "{feeds.find(feed => feed.id === confirmDeleteFeedId)?.title}" de tu listado de favoritos.

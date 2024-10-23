@@ -1,7 +1,7 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 
-// Define the types for your news articles
 export interface Article {
+  category: string | undefined;
   author: string;
   title: string;
   description: string;
@@ -21,32 +21,35 @@ interface NewsResponse {
   articles: Article[];
 }
 
-export const useFetchNews = (category: string) => {
+export const useFetchNews = () => {
   const [news, setNews] = useState<Article[]>([]);
-  const [loading, setLoading] = useState<boolean>(true);
+  const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
+  const [cache, setCache] = useState<Record<string, Article[]>>({});
 
-  useEffect(() => {
-    const fetchNewsData = async () => {
-      try {
-        setLoading(true);
-        const response = await fetch(
-          `https://saurav.tech/NewsAPI/top-headlines/category/${category}/in.json`
-        );
-        if (!response.ok) {
-          throw new Error("Failed to fetch news data");
-        }
-        const data: NewsResponse = await response.json();
-        setNews(data.articles);
-      } catch (err) {
-        setError((err as Error).message);
-      } finally {
-        setLoading(false);
+  const fetchNewsData = async (category: string) => {
+    if (cache[category]) {
+      setNews(cache[category]);
+      return;
+    }
+
+    try {
+      setLoading(true);
+      const response = await fetch(
+        `https://saurav.tech/NewsAPI/top-headlines/category/${category}/in.json`
+      );
+      if (!response.ok) {
+        throw new Error("Failed to fetch news data");
       }
-    };
+      const data: NewsResponse = await response.json();
+      setNews(data.articles);
+      setCache((prev) => ({ ...prev, [category]: data.articles }));
+    } catch (err) {
+      setError((err as Error).message);
+    } finally {
+      setLoading(false);
+    }
+  };
 
-    fetchNewsData();
-  }, [category]);
-
-  return { news, loading, error };
+  return { news, loading, error, fetchNewsData };
 };

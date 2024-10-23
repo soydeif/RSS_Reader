@@ -280,6 +280,7 @@
   padding: 10px;
   margin-bottom: 5px;
   min-height: 3rem;
+  /* height: 13rem; */
   cursor: pointer;
   line-height: 1.6;
 }

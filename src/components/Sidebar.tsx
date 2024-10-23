@@ -1,40 +1,60 @@
-import React, { useState } from 'react';
-import { FeedItemPost } from '../types/RSSFeed';
+import React, { useState, Fragment } from "react";
+import { FeedItemPost } from "../types/RSSFeed";
 import DOMPurify from "dompurify";
 import parse from "html-react-parser";
-import { Pagination, Alert, Button, Image } from 'antd';
-import Icon from './icons/icons';
+import { Pagination, Alert, Button, Image } from "antd";
+import Icon from "./icons/icons";
 
 interface SidebarProps {
     selectedFeedData: FeedItemPost[];
     savedPosts: FeedItemPost[];
     onSavePost: (post: FeedItemPost) => void;
-    pagination?: boolean
+    pagination?: boolean;
+    currentPage?: number | undefined;
+    setCurrentPage: (page: number) => void;
 }
 
-const defaultImage = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMIAAADDCAYAAADQvc6UAAABRWlDQ1BJQ0MgUHJvZmlsZQAAKJFjYGASSSwoyGFhYGDIzSspCnJ3UoiIjFJgf8LAwSDCIMogwMCcmFxc4BgQ4ANUwgCjUcG3awyMIPqyLsis7PPOq3QdDFcvjV3jOD1boQVTPQrgSkktTgbSf4A4LbmgqISBgTEFyFYuLykAsTuAbJEioKOA7DkgdjqEvQHEToKwj4DVhAQ5A9k3gGyB5IxEoBmML4BsnSQk8XQkNtReEOBxcfXxUQg1Mjc0dyHgXNJBSWpFCYh2zi+oLMpMzyhRcASGUqqCZ16yno6CkYGRAQMDKMwhqj/fAIcloxgHQqxAjIHBEugw5sUIsSQpBobtQPdLciLEVJYzMPBHMDBsayhILEqEO4DxG0txmrERhM29nYGBddr//5/DGRjYNRkY/l7////39v///y4Dmn+LgeHANwDrkl1AuO+pmgAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAwqADAAQAAAABAAAAwwAAAAD9b/HnAAAHlklEQVR4Ae3dP3PTWBSGcbGzM6GCKqlIBRV0dHRJFarQ0eUT8LH4BnRU0NHR0UEFVdIlFRV7TzRksomPY8uykTk/zewQfKw/9znv4yvJynLv4uLiV2dBoDiBf4qP3/ARuCRABEFAoBEgghggQAQZQKAnYEaQBAQaASKIAQJEkAEEegJmBElAoBEgghggQAQZQKAnYEaQBAQaASKIAQJEkAEEegJmBElAoBEgghggQAQZQKAnYEaQBAQaASKIAQJEkAEEegJmBElAoBEgghggQAQZQKAnYEaQBAQaASKIAQJEkAEEegJmBElAoBEgghggQAQZQKAnYEaQBAQaASKIAQJEkAEEegJmBElAoBEgghggQAQZQKAnYEaQBAQaASKIAQJEkAEEegJmBElAoBEgghggQAQZQKAnYEaQBAQaASKIAQJEkAEEegJmBElAoBEgghggQAQZQKAnYEaQBAQaASKIAQJEkAEEegJmBElAoBEgghggQAQZQKAnYEaQBAQaASKIAQJEkAEEegJmBElAoBEgghggQAQZQKAnYEaQBAQaASKIAQJEkAEEegJmBElAoBEgghggQAQZQKAnYEaQBAQaASKIAQJEkAEEegJmBElAoBEgghggQAQZQKAnYEaQBAQaASKIAQJEkAEEegJmBElAoBEgghgg0Aj8i0JO4OzsrPv69Wv+hi2qPHr0qNvf39+iI97soRIh4f3z58/u7du3SXX7Xt7Z2enevHmzfQe+oSN2apSAPj09TSrb+XKI/f379+08+A0cNRE2ANkupk+ACNPvkSPcAAEibACyXUyfABGm3yNHuAECRNgAZLuYPgEirKlHu7u7XdyytGwHAd8jjNyng4OD7vnz51dbPT8/7z58+NB9+/bt6jU/TI+AGWHEnrx48eJ/EsSmHzx40L18+fLyzxF3ZVMjEyDCiEDjMYZZS5wiPXnyZFbJaxMhQIQRGzHvWR7XCyOCXsOmiDAi1HmPMMQjDpbpEiDCiL358eNHurW/5SnWdIBbXiDCiA38/Pnzrce2YyZ4//59F3ePLNMl4PbpiL2J0L979+7yDtHDhw8vtzzvdGnEXdvUigSIsCLAWavHp/+qM0BcXMd/q25n1vF57TYBp0a3mUzilePj4+7k5KSLb6gt6ydAhPUzXnoPR0dHl79WGTNCfBnn1uvSCJdegQhLI1vvCk+fPu2ePXt2tZOYEV6/fn31dz+shwAR1sP1cqvLntbEN9MxA9xcYjsxS1jWR4AIa2Ibzx0tc44fYX/16lV6NDFLXH+YL32jwiACRBiEbf5KcXoTIsQSpzXx4N28Ja4BQoK7rgXiydbHjx/P25TaQAJEGAguWy0+2Q8PD6/Ki4R8EVl+bzBOnZY95fq9rj9zAkTI2SxdidBHqG9+skdw43borCXO/ZcJdraPWdv22uIEiLA4q7nvvCug8WTqzQveOH26fodo7g6uFe/a17W3+nFBAkRYENRdb1vkkz1CH9cPsVy/jrhr27PqMYvENYNlHAIesRiBYwRy0V+8iXP8+/fvX11Mr7L7ECueb/r48eMqm7FuI2BGWDEG8cm+7G3NEOfmdcTQw4h9/55lhm7DekRYKQPZF2ArbXTAyu4kDYB2YxUzwg0gi/41ztHnfQG26HbGel/crVrm7tNY+/1btkOEAZ2M05r4FB7r9GbAIdxaZYrHdOsgJ/wCEQY0J74TmOKnbxxT9n3FgGGWWsVdowHtjt9Nnvf7yQM2aZU/TIAIAxrw6dOnAWtZZcoEnBpNuTuObWMEiLAx1HY0ZQJEmHJ3HNvGCBBhY6jtaMoEiJB0Z29vL6ls58vxPcO8/zfrdo5qvKO+d3Fx8Wu8zf1dW4p/cPzLly/dtv9Ts/EbcvGAHhHyfBIhZ6NSiIBTo0LNNtScABFyNiqFCBChULMNNSdAhJyNSiECRCjUbEPNCRAhZ6NSiAARCjXbUHMCRMjZqBQiQIRCzTbUnAARcjYqhQgQoVCzDTUnQIScjUohAkQo1GxDzQkQIWejUogAEQo121BzAkTI2agUIkCEQs021JwAEXI2KoUIEKFQsw01J0CEnI1KIQJEKNRsQ80JECFno1KIABEKNdtQcwJEyNmoFCJAhELNNtScABFyNiqFCBChULMNNSdAhJyNSiECRCjUbEPNCRAhZ6NSiAARCjXbUHMCRMjZqBQiQIRCzTbUnAARcjYqhQgQoVCzDTUnQIScjUohAkQo1GxDzQkQIWejUogAEQo121BzAkTI2agUIkCEQs021JwAEXI2KoUIEKFQsw01J0CEnI1KIQJEKNRsQ80JECFno1KIABEKNdtQcwJEyNmoFCJAhELNNtScABFyNiqFCBChULMNNSdAhJyNSiECRCjUbEPNCRAhZ6NSiAARCjXbUHMCRMjZqBQiQIRCzTbUnAARcjYqhQgQoVCzDTUnQIScjUohAkQo1GxDzQkQIWejUogAEQo121BzAkTI2agUIkCEQs021JwAEXI2KoUIEKFQsw01J0CEnI1KIQJEKNRsQ80JECFno1KIABEKNdtQcwJEyNmoFCJAhELNNtScABFyNiqFCBChULMNNSdAhJyNSiEC/wGgKKC4YMA4TAAAAABJRU5ErkJggg=="
+const defaultImage =
+    "data:image/png;base64,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";
 
-const Sidebar: React.FC<SidebarProps> = ({ selectedFeedData, savedPosts, onSavePost, pagination = true }) => {
+const Sidebar: React.FC<SidebarProps> = ({
+    selectedFeedData,
+    savedPosts,
+    onSavePost,
+    pagination = true,
+    currentPage = 1,
+    setCurrentPage
+}) => {
     const [selectedPost, setSelectedPost] = useState<FeedItemPost | null>(null);
-    const [currentPage, setCurrentPage] = useState(1);
-    const pageSize = 10;
+
+    const pageSize = 5;
 
     const modifyLinks = (html: string) => {
-        const sanitizedHTML = DOMPurify.sanitize(html, {
-            USE_PROFILES: { html: true },
-        });
-        return parse(sanitizedHTML, {
-            replace: (domNode) => {
-                if (domNode.type === "tag" && domNode.name === "a") {
-                    domNode.attribs.target = "_blank";
-                    domNode.attribs.rel = "noopener noreferrer";
-                }
-            },
-        });
+        try {
+            const sanitizedHTML = DOMPurify.sanitize(html, {
+                USE_PROFILES: { html: true },
+            });
+            return parse(sanitizedHTML, {
+                replace: (domNode) => {
+                    if (domNode.type === "tag" && domNode.name === "a") {
+                        domNode.attribs.target = "_blank";
+                        domNode.attribs.rel = "noopener noreferrer";
+                    }
+                },
+            });
+        } catch (error) {
+            console.error("Error sanitizing HTML: ", error);
+            return html;
+        }
     };
 
+
     const formatDate = (dateString: string) => {
-        const options: Intl.DateTimeFormatOptions = { year: 'numeric', month: 'long', day: 'numeric' };
+        const options: Intl.DateTimeFormatOptions = {
+            year: "numeric",
+            month: "long",
+            day: "numeric",
+        };
         return new Date(dateString).toLocaleDateString(undefined, options);
     };
 
@@ -52,66 +72,149 @@ const Sidebar: React.FC<SidebarProps> = ({ selectedFeedData, savedPosts, onSaveP
         }
 
         return (
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+            <div
+                style={{
+                    display: "flex",
+                    flexDirection: "column",
+                    gap: "8px",
+                    paddingBottom: "5.5rem",
+                }}
+            >
                 {postsToShow.map((post, index) => {
-                    const isSaved = savedPosts.some(savedPost => savedPost.id === post.id);
+                    const isSaved = savedPosts.some(
+                        (savedPost) => savedPost.id === post.id
+                    );
                     return (
-                        <div key={index} style={{
-                            padding: '12px',
-                            border: '1px solid #eaeaea',
-                            borderRadius: '8px',
-                            background: '#f9f9f9',
-                            display: 'flex',
-                            flexDirection: 'row',
-                            alignItems: 'center',
-                            cursor: 'pointer',
-                            transition: 'background 0.2s ease',
-                        }}
-                            className='rss-item'
-                            onClick={() => setSelectedPost(selectedPost?.id === post.id ? null : post)}
-                        >
-
-                            <Image
-                                alt={post?.title}
-                                src={post?.thumbnailUrl || 'error'}
-                                fallback={defaultImage}
-                                loading="lazy"
-                                style={{ width: '50px', height: 'auto', marginRight: '12px', objectPosition: 'center' }}
-                            />
-
-                            <div style={{ flex: 1 }}>
-                                <h4 style={{ margin: 0, fontSize: '16px' }}>{modifyLinks(post.title)}</h4>
-                                <p style={{ marginTop: '4px', fontSize: '14px' }}>{modifyLinks(post.description)}</p>
-                            </div>
-                            <div style={{ cursor: 'pointer', padding: '0 1rem', alignSelf: 'self-start' }} onClick={(e) => { e.stopPropagation(); onSavePost(post); }}>
-                                {isSaved ? (
-                                    <Icon name="save" />
-                                ) : (
-                                    <Icon name="saved" />
+                        <Fragment key={index}>
+                            <div
+                                style={{
+                                    display: "flex",
+                                    justifyContent: "flex-start",
+                                    gap: "1rem",
+                                    marginTop: "8px",
+                                    fontSize: "14px",
+                                    color: "#555",
+                                }}
+                            >
+                                {post && (
+                                    <span style={{ fontWeight: "bold" }}>
+                                        {modifyLinks(post.author || "Unknown")}
+                                    </span>
+                                )}
+                                {post?.publishedAt && (
+                                    <time>{formatDate(post.publishedAt)}</time>
                                 )}
                             </div>
-                        </div>
+                            <div
+
+                                style={{
+                                    padding: "12px",
+                                    border: "1px solid #eaeaea",
+                                    borderRadius: "8px",
+                                    background: "#f9f9f9",
+                                    display: "flex",
+                                    flexDirection: "row",
+                                    alignItems: "center",
+                                    cursor: "pointer",
+                                    transition: "background 0.2s ease",
+                                }}
+                                className="rss-item"
+                                onClick={() =>
+                                    setSelectedPost(selectedPost?.id === post.id ? null : post)
+                                }
+                            >
+                                <Image
+                                    alt={post?.title}
+                                    src={post?.thumbnailUrl || "error"}
+                                    fallback={defaultImage}
+                                    loading="lazy"
+                                    style={{
+                                        width: "50px",
+                                        height: "auto",
+                                        marginRight: "12px",
+                                        objectPosition: "center",
+                                    }}
+                                />
+
+                                <div style={{ flex: 1 }}>
+                                    <h4 style={{ margin: 0, fontSize: "16px" }}>
+                                        {modifyLinks(post.title)}
+                                    </h4>
+                                    <p style={{ marginTop: "4px", fontSize: "14px" }}>
+                                        {modifyLinks(post.description)}
+                                    </p>
+                                </div>
+                                <div
+                                    style={{
+                                        cursor: "pointer",
+                                        padding: "0 1rem",
+                                        alignSelf: "self-start",
+                                    }}
+                                    onClick={(e) => {
+                                        e.stopPropagation();
+                                        onSavePost(post);
+                                    }}
+                                >
+                                    {isSaved ? <Icon name="save" /> : <Icon name="saved" />}
+                                </div>
+                            </div>
+                        </Fragment>
                     );
                 })}
 
-                {error && <Alert message={error} type="error" showIcon style={{ marginTop: '16px' }} />}
-
-                {pagination && <div style={{ display: 'flex', justifyContent: 'center', placeItems: 'self-end' }}>
-                    <Button title="Initial page" onClick={() => setCurrentPage(1)} disabled={currentPage === 1}>
-                        <Icon name="firstPage" />
-                    </Button>
-                    <Pagination
-                        current={currentPage}
-                        pageSize={pageSize}
-                        total={totalPosts}
-                        onChange={(page) => setCurrentPage(page)}
-                        showSizeChanger={false}
-                        style={{ marginTop: '16px', textAlign: 'center' }}
+                {error && (
+                    <Alert
+                        message={error}
+                        type="error"
+                        showIcon
+                        style={{ marginTop: "16px" }}
                     />
-                    <Button title="Last page" onClick={() => setCurrentPage(Math.ceil(totalPosts / pageSize))} disabled={currentPage === Math.ceil(totalPosts / pageSize)}>
-                        <Icon name="lastPage" />
-                    </Button>
-                </div>}
+                )}
+
+                {pagination && (
+                    <div
+                        style={{
+                            display: "flex",
+                            justifyContent: "center",
+                            placeItems: "self-end",
+                            position: "absolute",
+                            bottom: "0",
+                            width: "100%",
+                            height: "2.5rem",
+                        }}
+                    >
+                        {pageSize < 10 && (
+                            <Button
+                                title="Initial page"
+                                onClick={() => setCurrentPage(1)}
+                                disabled={currentPage === 1}
+                            >
+                                <Icon name="firstPage" />
+                            </Button>
+                        )}
+
+                        <Pagination
+                            current={currentPage}
+                            pageSize={pageSize}
+                            total={totalPosts}
+                            onChange={(page) => setCurrentPage(page)}
+                            style={{ marginTop: "16px", textAlign: "center" }}
+                            hideOnSinglePage={true}
+                            showSizeChanger={false}
+                            showLessItems
+                        />
+
+                        {pageSize < 10 && (
+                            <Button
+                                title="Last page"
+                                onClick={() => setCurrentPage(Math.ceil(totalPosts / pageSize))}
+                                disabled={currentPage === Math.ceil(totalPosts / pageSize)}
+                            >
+                                <Icon name="lastPage" />
+                            </Button>
+                        )}
+                    </div>
+                )}
             </div>
         );
     };
@@ -120,50 +223,87 @@ const Sidebar: React.FC<SidebarProps> = ({ selectedFeedData, savedPosts, onSaveP
         if (!selectedPost) return null;
 
         return (
-            <div style={{
-                marginLeft: '24px',
-                padding: '12px',
-                border: '1px solid #eaeaea',
-                borderRadius: '8px',
-                background: '#f9f9f9',
-                display: 'flex',
-                flexDirection: 'column',
-                maxWidth: '845px',
-                height: 'fit-content'
-            }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }} className="headline">
-
-                    <a href={selectedPost?.link} target='_blank' rel='noopener noreferrer'><h4 style={{ margin: 0 }}>{modifyLinks(selectedPost.title)}</h4></a>
+            <div
+                style={{
+                    marginLeft: "24px",
+                    padding: "12px",
+                    border: "1px solid #eaeaea",
+                    borderRadius: "8px",
+                    background: "#f9f9f9",
+                    display: "flex",
+                    flexDirection: "column",
+                    maxWidth: "845px",
+                    height: "fit-content",
+                }}
+            >
+                <div
+                    style={{
+                        display: "flex",
+                        justifyContent: "space-between",
+                        alignItems: "center",
+                    }}
+                    className="headline"
+                >
+                    <a
+                        href={selectedPost?.link}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                    >
+                        <h4 style={{ margin: 0 }}>{modifyLinks(selectedPost.title)}</h4>
+                    </a>
                 </div>
 
                 <Image
                     alt={selectedPost?.title}
-                    src={selectedPost?.thumbnailUrl || 'error'}
+                    src={selectedPost?.thumbnailUrl || "error"}
                     fallback={defaultImage}
-                    loading='lazy'
-                    style={{ marginTop: '16px', objectPosition: 'center' }}
+                    loading="lazy"
+                    style={{ objectPosition: "center" }}
                 />
 
-                <div style={{ display: 'flex', justifyContent: 'flex-start', gap: '1rem', marginTop: '8px', fontSize: '14px', color: '#555' }}>
-                    {selectedPost?.author && <span style={{ fontWeight: 'bold' }}>{modifyLinks(selectedPost.author)}</span>}
-                    {selectedPost?.publishedAt && <time>{formatDate(selectedPost.publishedAt)}</time>}
+                <div
+                    style={{
+                        display: "flex",
+                        justifyContent: "flex-start",
+                        gap: "1rem",
+                        marginTop: "8px",
+                        fontSize: "14px",
+                        color: "#555",
+                    }}
+                >
+                    {selectedPost?.author && (
+                        <span style={{ fontWeight: "bold" }}>
+                            {modifyLinks(selectedPost.author)}
+                        </span>
+                    )}
+                    {selectedPost?.publishedAt && (
+                        <time>{formatDate(selectedPost.publishedAt)}</time>
+                    )}
                 </div>
 
-                <p style={{ marginTop: '8px', textWrap: 'pretty' }}>{modifyLinks(selectedPost.description)}</p>
+                <p style={{ marginTop: "8px", textWrap: "pretty" }}>
+                    {modifyLinks(selectedPost.description)}
+                </p>
                 <br />
                 {selectedPost?.link && (
-                    <a href={selectedPost.link} target='_blank' rel='noopener noreferrer'>Continue reading...</a>
+                    <a href={selectedPost.link} target="_blank" rel="noopener noreferrer">
+                        Continue reading...
+                    </a>
                 )}
             </div>
         );
     };
 
     return (
-        <div style={{
-            display: 'grid',
-            gridTemplateColumns: selectedPost ? '1fr 1fr' : '1fr',
-            gap: '24px',
-        }}>
+        <div
+            style={{
+                display: "grid",
+                gridTemplateColumns: selectedPost ? "1fr 1fr" : "1fr",
+                gap: "24px",
+                position: "relative",
+                minHeight: "100vh",
+            }}
+        >
             {renderCompactView()}
             {renderDetailView()}
         </div>
