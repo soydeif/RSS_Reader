@@ -3,7 +3,11 @@ import { FeedItemPost } from "../types/RSSFeed";
 import DOMPurify from "dompurify";
 import parse from "html-react-parser";
 import { Pagination, Alert, Button, Image } from "antd";
+import { CloseOutlined } from "@ant-design/icons";
 import Icon from "./icons/icons";
+import useViewport from "../hooks/useViewport";
+
+type PresentationType = 'listCard' | 'list';
 
 interface SidebarProps {
     selectedFeedData: FeedItemPost[];
@@ -12,6 +16,7 @@ interface SidebarProps {
     pagination?: boolean;
     currentPage?: number | undefined;
     setCurrentPage: (page: number) => void;
+    typeofPresentation: PresentationType
 }
 
 const defaultImage =
@@ -23,12 +28,12 @@ const Sidebar: React.FC<SidebarProps> = ({
     onSavePost,
     pagination = true,
     currentPage = 1,
-    setCurrentPage
+    setCurrentPage,
+    typeofPresentation
 }) => {
     const [selectedPost, setSelectedPost] = useState<FeedItemPost | null>(null);
-
     const pageSize = 5;
-
+    const viewportType = useViewport();
     const modifyLinks = (html: string) => {
         try {
             const sanitizedHTML = DOMPurify.sanitize(html, {
@@ -71,6 +76,14 @@ const Sidebar: React.FC<SidebarProps> = ({
             return null;
         }
 
+        const width = {
+            listCard: '200px',
+            list: '50px',
+        };
+
+        const computedWidth = width[typeofPresentation] || width.list
+
+
         return (
             <div
                 style={{
@@ -88,55 +101,51 @@ const Sidebar: React.FC<SidebarProps> = ({
                         <Fragment key={index}>
                             <div
                                 style={{
-                                    display: "flex",
-                                    justifyContent: "flex-start",
-                                    gap: "1rem",
-                                    marginTop: "8px",
-                                    fontSize: "14px",
-                                    color: "#555",
-                                }}
-                            >
-                                {post && (
-                                    <span style={{ fontWeight: "bold" }}>
-                                        {modifyLinks(post.author || "Unknown")}
-                                    </span>
-                                )}
-                                {post?.publishedAt && (
-                                    <time>{formatDate(post.publishedAt)}</time>
-                                )}
-                            </div>
-                            <div
-
-                                style={{
                                     padding: "12px",
                                     border: "1px solid #eaeaea",
                                     borderRadius: "8px",
                                     background: "#f9f9f9",
                                     display: "flex",
-                                    flexDirection: "row",
+                                    flexDirection: viewportType !== 'desktop' ? "column" : "row",
                                     alignItems: "center",
                                     cursor: "pointer",
                                     transition: "background 0.2s ease",
+                                    gap: '15px'
+
                                 }}
                                 className="rss-item"
                                 onClick={() =>
                                     setSelectedPost(selectedPost?.id === post.id ? null : post)
                                 }
                             >
-                                <Image
-                                    alt={post?.title}
-                                    src={post?.thumbnailUrl || "error"}
-                                    fallback={defaultImage}
-                                    loading="lazy"
-                                    style={{
-                                        width: "50px",
-                                        height: "auto",
-                                        marginRight: "12px",
-                                        objectPosition: "center",
-                                    }}
-                                />
+                                {typeofPresentation !== 'list' &&
+                                    <Image
+                                        alt={post?.title}
+                                        src={post?.thumbnailUrl || "error"}
+                                        fallback={defaultImage}
+                                        loading="lazy"
+                                        style={{
+                                            width: viewportType !== 'desktop' ? '100%' : computedWidth,
+                                            height: "auto",
+                                            objectPosition: "center",
+                                            aspectRatio: viewportType !== 'desktop' ? '2/1' : 'unset',
+                                        }}
+                                    />
+                                }
+                                <div style={{ flex: 1, alignSelf: 'self-start', width: '100%' }} >
+                                    <>
+                                        {post && (
+                                            <span style={{ fontWeight: "bold" }}>
+                                                {modifyLinks(post.author || "Unknown")}
+                                            </span>
+                                        )}
+                                        {post?.publishedAt && (
 
-                                <div style={{ flex: 1 }}>
+                                            <time style={{ float: 'right' }}>{formatDate(post.publishedAt)}</time>
+
+                                        )}
+                                    </>
+                                    <br />
                                     <h4 style={{ margin: 0, fontSize: "16px" }}>
                                         {modifyLinks(post.title)}
                                     </h4>
@@ -148,7 +157,8 @@ const Sidebar: React.FC<SidebarProps> = ({
                                     style={{
                                         cursor: "pointer",
                                         padding: "0 1rem",
-                                        alignSelf: "self-start",
+                                        alignSelf: viewportType !== 'desktop' ? "self-end" : "self-start",
+                                        order: viewportType !== 'desktop' ? '-1' : 'unset',
                                     }}
                                     onClick={(e) => {
                                         e.stopPropagation();
@@ -251,6 +261,8 @@ const Sidebar: React.FC<SidebarProps> = ({
                     >
                         <h4 style={{ margin: 0 }}>{modifyLinks(selectedPost.title)}</h4>
                     </a>
+                    <Button color="danger" variant="text" onClick={() => setSelectedPost(null)} icon={<CloseOutlined />} />
+
                 </div>
 
                 <Image

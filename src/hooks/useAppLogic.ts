@@ -5,6 +5,8 @@ import { store } from "../store";
 import { addFeed, removeFeed } from "../rssSlice";
 import { useFetchDashboardNews } from "./useDashboardNews";
 
+type PresentationType = "listCard" | "list";
+
 const categories = [
   { key: "business", label: "Business" },
   { key: "entertainment", label: "Entertainment" },
@@ -40,6 +42,8 @@ export const useAppLogic = () => {
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [viewSaved, setViewSaved] = useState(false);
   const [searchTerm, setSearchTerm] = useState<string>("");
+  const [typeofPresentation, setTypeofPresentation] =
+    useState<PresentationType>("list");
 
   const [currentPage, setCurrentPage] = useState(1);
 
@@ -140,5 +144,7 @@ export const useAppLogic = () => {
     filteredPosts,
     currentPage,
     setCurrentPage,
+    typeofPresentation,
+    setTypeofPresentation,
   };
 };

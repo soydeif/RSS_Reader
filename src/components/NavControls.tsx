@@ -1,14 +1,17 @@
-import React, { useState } from "react";
+import React, { Dispatch, SetStateAction, useState } from "react";
 import { Input, Button } from "antd";
-import { MenuOutlined, UnorderedListOutlined, BorderOutlined } from '@ant-design/icons';
+import { MenuOutlined, UnorderedListOutlined } from '@ant-design/icons';
+
+
+type PresentationType = 'listCard' | 'list';
 
 interface SearchAndViewSwitcherProps {
     collapsed: boolean;
     onSearch: (term: string) => void;
-    onViewChange: (viewType: string) => void;
+    setTypeofPresentation: Dispatch<SetStateAction<PresentationType>>;
 }
 
-const SearchAndViewSwitcher: React.FC<SearchAndViewSwitcherProps> = ({ collapsed, onSearch, onViewChange }) => {
+const NavControls: React.FC<SearchAndViewSwitcherProps> = ({ collapsed, onSearch, setTypeofPresentation }) => {
     const [searchTerm, setSearchTerm] = useState("");
 
     const handleSearch = (e: React.FormEvent) => {
@@ -32,19 +35,19 @@ const SearchAndViewSwitcher: React.FC<SearchAndViewSwitcherProps> = ({ collapsed
             <div style={{ display: 'flex', gap: '8px' }}>
                 <Button
                     icon={<UnorderedListOutlined />}
-                    onClick={() => onViewChange('listCard')}
+                    onClick={() => setTypeofPresentation('listCard')}
                 />
                 <Button
                     icon={<MenuOutlined />}
-                    onClick={() => onViewChange('list')}
+                    onClick={() => setTypeofPresentation('list')}
                 />
-                <Button
+                {/* <Button
                     icon={<BorderOutlined />}
-                    onClick={() => onViewChange('card')}
-                />
+                    onClick={() => setTypeofPresentation('card')}
+                /> */}
             </div>
         </form>
     );
 };
 
-export default SearchAndViewSwitcher;
+export default NavControls;
