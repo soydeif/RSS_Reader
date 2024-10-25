@@ -1,6 +1,6 @@
 import React from 'react';
 import PostItem from './PostItem';
-import { PostsProps } from '../types/RSSFeed';
+import { PostsProps } from '@/types/RSSFeed';
 
 const Posts: React.FC<PostsProps> = ({
     selectedFeedData,

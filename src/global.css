@@ -254,13 +254,13 @@
 }
 
 .headline a {
-  color: #593fee;
+  color: #3673fe;
   font-weight: bold;
   font-size: 1rem;
 }
 
 .headline {
-  color: #593fee;
+  color: #3673fe;
   font-weight: bold;
   font-size: 1rem;
   border-bottom: 1px solid #ddd;
@@ -268,6 +268,7 @@
   margin-bottom: 20px;
   min-height: 3rem;
   line-height: 1.6;
+  gap: 1rem;
 }
 
 .activated {
@@ -293,7 +294,6 @@
   padding: 10px;
   margin-bottom: 5px;
   min-height: 3rem;
-  /* height: 13rem; */
   cursor: pointer;
   line-height: 1.6;
 }
@@ -408,41 +408,24 @@ figcaption {
   }
 }
 
-/* Estilos para la barra de desplazamiento en navegadores webkit (Chrome, Safari) */
+
 ::-webkit-scrollbar {
   width: 12px;
-  /* Ancho de la barra de desplazamiento */
-  background: #dfdfed;
-  /* Fondo de la barra de desplazamiento */
+   background: #dfdfed; 
 }
 
 ::-webkit-scrollbar-track {
-  background: #dfdfed;
-  /* Color del fondo de la barra de desplazamiento */
+  background: #dfdfed; 
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #4d35c9;
-  /* Color del pulgar (parte que arrastra) con transparencia */
   border-radius: 10px;
-  /* Bordes redondeados */
   transition: background 0.3s;
-  /* Transición suave al cambiar de color */
 }
 
-::-webkit-scrollbar-thumb:hover {
-  background: #4d35c9;
-  /* Color del pulgar al pasar el mouse */
-}
-
-/* Estilos para la barra de desplazamiento en Firefox */
 * {
-  scrollbar-width: thin;
-  /* Hacer la barra de desplazamiento más delgada */
-  scrollbar-color: #4d35c9 #dfdfed;
-  /* Color del pulgar y fondo */
+  scrollbar-width: thin;  
 }
-
 .logo {
   display: flex;
   justify-content: center;
@@ -458,4 +441,7 @@ figcaption {
 .ant-image-preview-img-wrapper>img {
   object-position: center;
   width: fit-content;
+}
+.ant-layout-header{
+  background-color: #edeeff !important;
 }

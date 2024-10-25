@@ -1,6 +1,5 @@
 import { useState, useEffect } from "react";
 
-// Define the types for your news articles
 export interface Article {
   category: string | undefined;
   author: string;

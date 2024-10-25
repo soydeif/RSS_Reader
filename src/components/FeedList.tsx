@@ -1,4 +1,4 @@
-import { FeedListProps } from "../types/RSSFeed";
+import { FeedListProps } from "@/types/RSSFeed";
 import DOMPurify from "dompurify";
 import parse from "html-react-parser";
 import { useRef, useState } from "react";

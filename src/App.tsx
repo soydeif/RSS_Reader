@@ -12,6 +12,7 @@ import { Layout, Button, Menu } from "antd";
 
 import { useAppLogic } from "./hooks/useAppLogic";
 import ContentDisplay from "./components/ContentDisplay";
+import Logo from "./assets/icons/Logo";
 
 const { Header, Content, Footer, Sider } = Layout;
 
@@ -44,10 +45,6 @@ const App: React.FC = () => {
       key: "dashboard",
       icon: <HomeOutlined />,
       label: "Dashboard",
-      onClick: () => {
-        handleCategorySelection("dashboard");
-        setSearchTerm("");
-      },
     },
     {
       key: "Categories",
@@ -56,7 +53,7 @@ const App: React.FC = () => {
       children: categories.map((category) => ({
         key: category.key,
         label: (
-          <span onClick={() => handleCategorySelection(category.key)}>
+          <span>
             {category.label}
           </span>
         ),
@@ -66,10 +63,6 @@ const App: React.FC = () => {
       key: "saved",
       icon: <BookOutlined />,
       label: "Saved",
-      onClick: () => {
-        setViewSaved(true);
-        setSearchTerm("");
-      },
       disabled: savedPosts.length === 0,
     },
   ];
@@ -83,7 +76,9 @@ const App: React.FC = () => {
         collapsible
         collapsed={collapsed}
         onBreakpoint={setCollapsed}
-        style={{ background: "#dfdaf9ba" }}
+        breakpoint="md"
+        collapsedWidth={1}
+        style={{ background: "#edeeff" }}
       >
         <Header style={{ padding: 0, background: "#f5f5f5" }}>
           <Button
@@ -98,13 +93,31 @@ const App: React.FC = () => {
           theme="light"
           mode="vertical"
           selectedKeys={[selectedCategory || ""]}
-          style={{ background: "#dfdaf9ba" }}
+          style={{ background: "#edeeff" }}
           items={menuItems}
+          onSelect={({ key }) => {
+            if (key === "dashboard") {
+              setViewSaved(false);
+              handleCategorySelection("dashboard");
+              setSearchTerm("");
+            } else if (key === "saved") {
+              setViewSaved(true);
+              setSearchTerm("");
+              setCurrentPage(1)
+            } else {
+              setViewSaved(false);
+              handleCategorySelection(key);
+              setSearchTerm("");
+            }
+          }}
         />
       </Sider>
 
       <Layout>
         <div style={{ minHeight: "45px" }} />
+        <header style={{ margin: '0 auto' }}>
+          <Logo />
+        </header>
         <Content style={{ margin: "0 16px" }}>
           <div style={{ borderRadius: 8, minHeight: 360 }}>
             <ContentDisplay
@@ -129,9 +142,9 @@ const App: React.FC = () => {
           </div>
         </Content>
         <Footer
-          style={{ textAlign: "center", color: "#502dc8", fontWeight: "bold" }}
+          style={{ textAlign: "center", color: "#3673fe", fontWeight: "bold", marginTop: '1rem', }}
         >
-          RSS Reader ©{new Date().getFullYear()} Project by David Diaz ☕
+          RSS Reader ©{new Date().getFullYear()} <br />Project by David Diaz ☕
         </Footer>
       </Layout>
     </Layout>

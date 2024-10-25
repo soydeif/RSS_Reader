@@ -1,9 +1,9 @@
 import React, { Dispatch, SetStateAction, useState } from "react";
 import { Input, Button } from "antd";
 import { MenuOutlined, UnorderedListOutlined } from '@ant-design/icons';
+import { PresentationType } from "@/types/RSSFeed";
 
 
-type PresentationType = 'listCard' | 'list';
 
 interface SearchAndViewSwitcherProps {
     collapsed: boolean;
@@ -17,6 +17,7 @@ const NavControls: React.FC<SearchAndViewSwitcherProps> = ({ collapsed, onSearch
     const handleSearch = (e: React.FormEvent) => {
         e.preventDefault();
         onSearch(searchTerm);
+        setSearchTerm('')
     };
 
     return (
@@ -25,7 +26,7 @@ const NavControls: React.FC<SearchAndViewSwitcherProps> = ({ collapsed, onSearch
                 <Input
                     type="text"
                     value={searchTerm}
-                    onChange={(e) => setSearchTerm(e.target.value)}
+                    onChange={(e) => { setSearchTerm(e.target.value) }}
                     placeholder="Search your topic"
                     style={{ marginRight: '8px' }}
                 />
@@ -41,10 +42,6 @@ const NavControls: React.FC<SearchAndViewSwitcherProps> = ({ collapsed, onSearch
                     icon={<MenuOutlined />}
                     onClick={() => setTypeofPresentation('list')}
                 />
-                {/* <Button
-                    icon={<BorderOutlined />}
-                    onClick={() => setTypeofPresentation('card')}
-                /> */}
             </div>
         </form>
     );

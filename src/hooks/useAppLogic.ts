@@ -1,8 +1,8 @@
 import { useState, useEffect } from "react";
 import { Article, useFetchNews } from "./useFetchNews";
-import { FeedItemPost } from "../types/RSSFeed";
-import { store } from "../store";
-import { addFeed, removeFeed } from "../rssSlice";
+import { FeedItemPost } from "@/types/RSSFeed";
+import { store } from "@/store";
+import { addFeed, removeFeed } from "@/rssSlice";
 import { useFetchDashboardNews } from "./useDashboardNews";
 
 type PresentationType = "listCard" | "list";
@@ -43,7 +43,20 @@ export const useAppLogic = () => {
   const [viewSaved, setViewSaved] = useState(false);
   const [searchTerm, setSearchTerm] = useState<string>("");
   const [typeofPresentation, setTypeofPresentation] =
-    useState<PresentationType>("list");
+    useState<PresentationType>(() => {
+      const typeofPresentationFromStorage =
+        localStorage.getItem("typeofPresentation");
+
+      if (typeofPresentationFromStorage) {
+        const cleanedValue = typeofPresentationFromStorage.replace(
+          /^"+|"+$/g,
+          ""
+        );
+        return cleanedValue as PresentationType;
+      }
+
+      return "list";
+    });
 
   const [currentPage, setCurrentPage] = useState(1);
 
@@ -63,6 +76,13 @@ export const useAppLogic = () => {
     localStorage.setItem("savedPosts", JSON.stringify(savedPosts));
   }, [savedPosts]);
 
+  useEffect(() => {
+    localStorage.setItem(
+      "typeofPresentation",
+      JSON.stringify(typeofPresentation)
+    );
+  }, [typeofPresentation]);
+
   const handleSavePost = (post: FeedItemPost) => {
     setSavedPosts((prev) => {
       const isAlreadySaved = prev.some((item) => item.id === post.id);
@@ -79,14 +99,13 @@ export const useAppLogic = () => {
 
   const handleCategorySelection = async (categoryKey: string) => {
     if (categoryKey === "dashboard") {
+      setCurrentPage(1);
       setSelectedCategory(null);
     } else {
+      setCurrentPage(1);
       setSelectedCategory(categoryKey);
       await fetchNewsData(categoryKey);
     }
-    setCurrentPage(1);
-    setViewSaved(false);
-    setSearchTerm("");
   };
 
   const filteredPosts = viewSaved

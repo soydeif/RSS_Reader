@@ -1,7 +1,7 @@
 import React from "react";
 import DOMPurify from "dompurify";
 import parse from "html-react-parser";
-import { PostItemProps } from "../types/RSSFeed";
+import { PostItemProps } from "@/types/RSSFeed";
 
 const PostItem: React.FC<PostItemProps> = ({
     item,

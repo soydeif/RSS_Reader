@@ -1,13 +1,13 @@
 import React, { useState, Fragment } from "react";
-import { FeedItemPost } from "../types/RSSFeed";
+import { FeedItemPost, PresentationType } from "@/types/RSSFeed";
 import DOMPurify from "dompurify";
 import parse from "html-react-parser";
 import { Pagination, Alert, Button, Image } from "antd";
 import { CloseOutlined } from "@ant-design/icons";
 import Icon from "./icons/icons";
-import useViewport from "../hooks/useViewport";
+import useViewport from "@/hooks/useViewport";
 
-type PresentationType = 'listCard' | 'list';
+
 
 interface SidebarProps {
     selectedFeedData: FeedItemPost[];
@@ -115,7 +115,8 @@ const Sidebar: React.FC<SidebarProps> = ({
                                 }}
                                 className="rss-item"
                                 onClick={() =>
-                                    setSelectedPost(selectedPost?.id === post.id ? null : post)
+                                    viewportType !== 'desktop' ? null :
+                                        setSelectedPost(selectedPost?.id === post.id ? null : post)
                                 }
                             >
                                 {typeofPresentation !== 'list' &&
@@ -128,7 +129,7 @@ const Sidebar: React.FC<SidebarProps> = ({
                                             width: viewportType !== 'desktop' ? '100%' : computedWidth,
                                             height: "auto",
                                             objectPosition: "center",
-                                            aspectRatio: viewportType !== 'desktop' ? '2/1' : 'unset',
+                                            aspectRatio: viewportType !== 'desktop' ? '2/1' : '16/9',
                                         }}
                                     />
                                 }
@@ -149,9 +150,17 @@ const Sidebar: React.FC<SidebarProps> = ({
                                     <h4 style={{ margin: 0, fontSize: "16px" }}>
                                         {modifyLinks(post.title)}
                                     </h4>
-                                    <p style={{ marginTop: "4px", fontSize: "14px" }}>
+
+
+                                    <p style={{ marginTop: "4px", fontSize: "14px", textWrap: 'pretty' }}>
                                         {modifyLinks(post.description)}
                                     </p>
+                                    {viewportType !== 'desktop' && post?.link && (
+                                        <a href={post.link} target="_blank" rel="noopener noreferrer">
+                                            <br />
+                                            Continue reading...
+                                        </a>
+                                    )}
                                 </div>
                                 <div
                                     style={{
@@ -195,6 +204,8 @@ const Sidebar: React.FC<SidebarProps> = ({
                     >
                         {pageSize < 10 && (
                             <Button
+                                color="default"
+                                variant="link"
                                 title="Initial page"
                                 onClick={() => setCurrentPage(1)}
                                 disabled={currentPage === 1}
@@ -216,6 +227,8 @@ const Sidebar: React.FC<SidebarProps> = ({
 
                         {pageSize < 10 && (
                             <Button
+                                color="default"
+                                variant="link"
                                 title="Last page"
                                 onClick={() => setCurrentPage(Math.ceil(totalPosts / pageSize))}
                                 disabled={currentPage === Math.ceil(totalPosts / pageSize)}
@@ -235,7 +248,6 @@ const Sidebar: React.FC<SidebarProps> = ({
         return (
             <div
                 style={{
-                    marginLeft: "24px",
                     padding: "12px",
                     border: "1px solid #eaeaea",
                     borderRadius: "8px",
@@ -317,7 +329,7 @@ const Sidebar: React.FC<SidebarProps> = ({
             }}
         >
             {renderCompactView()}
-            {renderDetailView()}
+            {viewportType === 'desktop' && renderDetailView()}
         </div>
     );
 };

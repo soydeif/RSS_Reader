@@ -1,3 +1,5 @@
+import { Dispatch, SetStateAction } from "react";
+
 export interface RSSItem {
   title: string;
   link: string;
@@ -52,3 +54,23 @@ export type FeedItemPost = {
   author?: string;
   category?: string;
 };
+
+export type PresentationType = "listCard" | "list";
+
+export interface ContentDisplayProps {
+  categoryLoading: boolean;
+  dashboardLoading: boolean;
+  categoryError: string | null;
+  dashboardError: string | null;
+  filteredGroupedPosts: Record<string, FeedItemPost[]>;
+  collapsed: boolean;
+  setSearchTerm: (term: string) => void;
+  searchTerm: string;
+  filteredPosts: FeedItemPost[];
+  savedPosts: FeedItemPost[];
+  handleSavePost: (post: FeedItemPost) => void;
+  currentPage: number;
+  setCurrentPage: (page: number) => void;
+  typeofPresentation: PresentationType;
+  setTypeofPresentation: Dispatch<SetStateAction<PresentationType>>;
+}

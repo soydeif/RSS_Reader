@@ -1,32 +1,15 @@
-import React, { Dispatch, SetStateAction } from 'react'
-import { Alert, Skeleton } from 'antd';
+import React from 'react'
+import { Alert, Skeleton, Empty } from 'antd';
 import NavControls from './NavControls';
 import Sidebar from './Sidebar';
-import { FeedItemPost } from '../types/RSSFeed';
+import { ContentDisplayProps } from '@/types/RSSFeed';
 
-type PresentationType = 'listCard' | 'list';
 
-interface ContentDisplayProps {
-    categoryLoading: boolean;
-    dashboardLoading: boolean;
-    categoryError: string | null;
-    dashboardError: string | null;
-    filteredGroupedPosts: Record<string, FeedItemPost[]>;
-    collapsed: boolean;
-    setSearchTerm: (term: string) => void;
-    searchTerm: string;
-    filteredPosts: FeedItemPost[];
-    savedPosts: FeedItemPost[];
-    handleSavePost: (post: FeedItemPost) => void;
-    currentPage: number;
-    setCurrentPage: (page: number) => void;
-    typeofPresentation: PresentationType;
-    setTypeofPresentation: Dispatch<SetStateAction<PresentationType>>;
-}
 
 const ContentDisplay: React.FC<ContentDisplayProps> = ({ categoryLoading, dashboardLoading, categoryError, dashboardError,
     filteredGroupedPosts, collapsed, setSearchTerm, searchTerm, filteredPosts, savedPosts, handleSavePost,
     currentPage, setCurrentPage, setTypeofPresentation, typeofPresentation }) => {
+
     if (categoryLoading || dashboardLoading) {
         return <Skeleton active paragraph={{ rows: 10 }} />;
     }
@@ -48,7 +31,7 @@ const ContentDisplay: React.FC<ContentDisplayProps> = ({ categoryLoading, dashbo
                             typeofPresentation={typeofPresentation} />
                     ))
                 ) : (
-                    <p>No se encontraron resultados.</p>
+                    <Empty description="No results founded" />
                 )
             ) : (
                 <Sidebar selectedFeedData={filteredPosts} onSavePost={handleSavePost} savedPosts={savedPosts}
