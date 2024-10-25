@@ -4,6 +4,7 @@ import { FeedItemPost } from "@/types/RSSFeed";
 import { store } from "@/store";
 import { addFeed, removeFeed } from "@/rssSlice";
 import { useFetchDashboardNews } from "./useDashboardNews";
+import useViewport from "./useViewport";
 
 type PresentationType = "listCard" | "list";
 
@@ -57,7 +58,7 @@ export const useAppLogic = () => {
 
       return "list";
     });
-
+  const viewportType = useViewport();
   const [currentPage, setCurrentPage] = useState(1);
 
   const {
@@ -86,10 +87,11 @@ export const useAppLogic = () => {
   const handleSavePost = (post: FeedItemPost) => {
     setSavedPosts((prev) => {
       const isAlreadySaved = prev.some((item) => item.id === post.id);
+
       if (isAlreadySaved) {
         const newPosts = prev.filter((item) => item.id !== post.id);
         store.dispatch(removeFeed(post.id));
-        return newPosts;
+        return newPosts.length > 0 ? newPosts : [];
       } else {
         store.dispatch(addFeed({ title: post.title, url: post.link }));
         return [...prev, post];
@@ -136,6 +138,24 @@ export const useAppLogic = () => {
 
   const filteredGroupedPosts = groupedPosts(filteredPosts);
 
+  const handleMenuSelect = (key: string) => {
+    setSearchTerm("");
+    setCurrentPage(1);
+
+    if (key === "dashboard") {
+      setViewSaved(false);
+      handleCategorySelection("dashboard");
+    } else if (key === "saved") {
+      setViewSaved(true);
+    } else {
+      setViewSaved(false);
+      handleCategorySelection(key);
+    }
+    if (viewportType !== "desktop") {
+      setCollapsed(!collapsed);
+    }
+  };
+
   return {
     collapsed,
     setCollapsed,
@@ -144,11 +164,9 @@ export const useAppLogic = () => {
     selectedCategory,
     setSelectedCategory,
     viewSaved,
-    setViewSaved,
     searchTerm,
     setSearchTerm,
     handleSavePost,
-    handleCategorySelection,
     categories,
     mapArticleToFeedItemPost,
     categoryNews,
@@ -165,5 +183,6 @@ export const useAppLogic = () => {
     setCurrentPage,
     typeofPresentation,
     setTypeofPresentation,
+    handleMenuSelect,
   };
 };

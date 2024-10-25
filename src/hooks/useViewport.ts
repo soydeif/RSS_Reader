@@ -1,10 +1,8 @@
 import { useEffect, useState } from "react";
 
 const getViewportType = (width: number) => {
-  if (width < 768) {
-    return "mobile";
-  } else if (width >= 768 && width < 1024) {
-    return "tablet";
+  if (width < 1024) {
+    return "not-desktop";
   } else {
     return "desktop";
   }

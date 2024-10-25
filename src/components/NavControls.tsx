@@ -22,7 +22,9 @@ const NavControls: React.FC<SearchAndViewSwitcherProps> = ({ collapsed, onSearch
 
     return (
         <form onSubmit={handleSearch} style={{ display: 'flex', alignItems: 'center', padding: !collapsed ? '0 16px' : 0, gap: '1rem' }}>
-            <div style={{ display: 'flex', justifyContent: 'flex-start', flexDirection: 'row', gap: '0.5rem', padding: '2rem 0', flexGrow: 1 }}>
+            <div
+                className="input-search"
+                style={{ display: 'flex', justifyContent: 'flex-start', flexDirection: 'row', gap: '0.5rem', padding: '2rem 0', flexGrow: 1 }}>
                 <Input
                     type="text"
                     value={searchTerm}
@@ -33,7 +35,8 @@ const NavControls: React.FC<SearchAndViewSwitcherProps> = ({ collapsed, onSearch
                 <Button type="default" htmlType="submit">Search</Button>
             </div>
 
-            <div style={{ display: 'flex', gap: '8px' }}>
+            <div style={{ display: 'flex', gap: '8px' }}
+                className="style-view-btn-content">
                 <Button
                     icon={<UnorderedListOutlined />}
                     onClick={() => setTypeofPresentation('listCard')}

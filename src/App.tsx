@@ -12,7 +12,7 @@ import { Layout, Button, Menu } from "antd";
 
 import { useAppLogic } from "./hooks/useAppLogic";
 import ContentDisplay from "./components/ContentDisplay";
-import Logo from "./assets/icons/Logo";
+import Logo from "./components/icons/Logo";
 
 const { Header, Content, Footer, Sider } = Layout;
 
@@ -22,11 +22,9 @@ const App: React.FC = () => {
     setCollapsed,
     savedPosts,
     selectedCategory,
-    setViewSaved,
     searchTerm,
     setSearchTerm,
     handleSavePost,
-    handleCategorySelection,
     categories,
     categoryLoading,
     dashboardLoading,
@@ -37,7 +35,8 @@ const App: React.FC = () => {
     currentPage,
     setCurrentPage,
     typeofPresentation,
-    setTypeofPresentation
+    setTypeofPresentation,
+    handleMenuSelect
   } = useAppLogic();
 
   const menuItems = [
@@ -67,10 +66,8 @@ const App: React.FC = () => {
     },
   ];
 
-
-
   return (
-    <Layout style={{ minHeight: "100vh" }}>
+    <Layout className="app-layout">
       <Sider
         trigger={null}
         collapsible
@@ -78,14 +75,14 @@ const App: React.FC = () => {
         onBreakpoint={setCollapsed}
         breakpoint="md"
         collapsedWidth={1}
-        style={{ background: "#edeeff" }}
+        className="sider"
       >
-        <Header style={{ padding: 0, background: "#f5f5f5" }}>
+        <Header className={collapsed ? 'hamburguer-menu-open' : 'hamburguer-menu'}>
           <Button
             type="text"
             icon={collapsed ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />}
             onClick={() => setCollapsed(!collapsed)}
-            style={{ fontSize: "16px", width: 80, height: 64 }}
+            className="collapse-button"
           />
         </Header>
 
@@ -93,33 +90,19 @@ const App: React.FC = () => {
           theme="light"
           mode="vertical"
           selectedKeys={[selectedCategory || ""]}
-          style={{ background: "#edeeff" }}
+          className="menu"
           items={menuItems}
-          onSelect={({ key }) => {
-            if (key === "dashboard") {
-              setViewSaved(false);
-              handleCategorySelection("dashboard");
-              setSearchTerm("");
-            } else if (key === "saved") {
-              setViewSaved(true);
-              setSearchTerm("");
-              setCurrentPage(1)
-            } else {
-              setViewSaved(false);
-              handleCategorySelection(key);
-              setSearchTerm("");
-            }
-          }}
+          onSelect={({ key }) => handleMenuSelect(key)}
         />
       </Sider>
 
       <Layout>
-        <div style={{ minHeight: "45px" }} />
-        <header style={{ margin: '0 auto' }}>
+        <div className="spacer" />
+        <header className="logo-header">
           <Logo />
         </header>
-        <Content style={{ margin: "0 16px" }}>
-          <div style={{ borderRadius: 8, minHeight: 360 }}>
+        <Content className="content">
+          <div className="content-display-container">
             <ContentDisplay
               {...{
                 categoryLoading,
@@ -141,10 +124,9 @@ const App: React.FC = () => {
             />
           </div>
         </Content>
-        <Footer
-          style={{ textAlign: "center", color: "#3673fe", fontWeight: "bold", marginTop: '1rem', }}
-        >
-          RSS Reader ©{new Date().getFullYear()} <br />Project by David Diaz ☕
+        <Footer className="footer">
+          Project {new Date().getFullYear()} <br />
+          <span className="footer-highlight">by David Diaz ☕</span>
         </Footer>
       </Layout>
     </Layout>

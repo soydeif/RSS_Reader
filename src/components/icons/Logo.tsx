@@ -1,6 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
-
 const Logo = (props: any) => {
     return (
         <svg

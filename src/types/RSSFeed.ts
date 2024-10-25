@@ -1,4 +1,5 @@
 import { Dispatch, SetStateAction } from "react";
+import type { TourProps } from "antd";
 
 export interface RSSItem {
   title: string;
@@ -38,6 +39,7 @@ export interface PostsProps {
   activatedItemIndex: number | null;
   onItemSelect: (index: number) => void;
   onItemActivate: (index: number | null) => void;
+  steps: TourProps["steps"];
 }
 
 export type FeedItemPost = {
@@ -73,4 +75,14 @@ export interface ContentDisplayProps {
   setCurrentPage: (page: number) => void;
   typeofPresentation: PresentationType;
   setTypeofPresentation: Dispatch<SetStateAction<PresentationType>>;
+}
+
+export interface SidebarProps {
+  selectedFeedData: FeedItemPost[];
+  savedPosts: FeedItemPost[];
+  onSavePost: (post: FeedItemPost) => void;
+  pagination?: boolean;
+  currentPage?: number | undefined;
+  setCurrentPage: (page: number) => void;
+  typeofPresentation: PresentationType;
 }

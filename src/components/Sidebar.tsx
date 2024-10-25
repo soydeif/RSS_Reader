@@ -1,26 +1,10 @@
-import React, { useState, Fragment } from "react";
-import { FeedItemPost, PresentationType } from "@/types/RSSFeed";
-import DOMPurify from "dompurify";
-import parse from "html-react-parser";
-import { Pagination, Alert, Button, Image } from "antd";
+import React, { Fragment } from "react";
+import { SidebarProps } from "@/types/RSSFeed";
+import { Pagination, Alert, Button, Image, Empty, Tour } from "antd";
 import { CloseOutlined } from "@ant-design/icons";
 import Icon from "./icons/icons";
-import useViewport from "@/hooks/useViewport";
+import { useSidebarLogic } from "@/hooks/useSidebarLogic";
 
-
-
-interface SidebarProps {
-    selectedFeedData: FeedItemPost[];
-    savedPosts: FeedItemPost[];
-    onSavePost: (post: FeedItemPost) => void;
-    pagination?: boolean;
-    currentPage?: number | undefined;
-    setCurrentPage: (page: number) => void;
-    typeofPresentation: PresentationType
-}
-
-const defaultImage =
-    "data:image/png;base64,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";
 
 const Sidebar: React.FC<SidebarProps> = ({
     selectedFeedData,
@@ -29,146 +13,118 @@ const Sidebar: React.FC<SidebarProps> = ({
     pagination = true,
     currentPage = 1,
     setCurrentPage,
-    typeofPresentation
+    typeofPresentation,
 }) => {
-    const [selectedPost, setSelectedPost] = useState<FeedItemPost | null>(null);
-    const pageSize = 5;
-    const viewportType = useViewport();
-    const modifyLinks = (html: string) => {
-        try {
-            const sanitizedHTML = DOMPurify.sanitize(html, {
-                USE_PROFILES: { html: true },
-            });
-            return parse(sanitizedHTML, {
-                replace: (domNode) => {
-                    if (domNode.type === "tag" && domNode.name === "a") {
-                        domNode.attribs.target = "_blank";
-                        domNode.attribs.rel = "noopener noreferrer";
-                    }
-                },
-            });
-        } catch (error) {
-            console.error("Error sanitizing HTML: ", error);
-            return html;
-        }
+
+    const {
+        formatDate,
+        modifyLinks,
+        selectedPost,
+        setSelectedPost,
+        imagesLoaded,
+        setImagesLoaded,
+        error,
+        setError,
+        isTourOpen,
+        tourStep,
+        setTourStep,
+        viewportType,
+        pageSize,
+        defaultImage,
+        steps,
+        handleTourClose
+    } = useSidebarLogic();
+
+    const totalPosts = selectedFeedData.length;
+    const startIndex = (currentPage - 1) * pageSize;
+    const endIndex = Math.min(startIndex + pageSize, totalPosts);
+    const postsToShow = selectedFeedData.slice(startIndex, endIndex);
+
+    const width = {
+        listCard: "200px",
+        list: "50px",
     };
 
+    const dynamicPosition =
+        viewportType === "desktop"
+            ? !selectedPost || totalPosts > 5
+                ? "absolute"
+                : "unset"
+            : "unset";
 
-    const formatDate = (dateString: string) => {
-        const options: Intl.DateTimeFormatOptions = {
-            year: "numeric",
-            month: "long",
-            day: "numeric",
-        };
-        return new Date(dateString).toLocaleDateString(undefined, options);
-    };
 
-    const [error, setError] = useState<string | null>(null);
+    if (totalPosts === 0) {
+        setError("No hay publicaciones para mostrar.");
+        return null;
+    }
+    if (postsToShow.length === 0) {
+        setError("No hay publicaciones para mostrar.");
+        return null;
+    }
 
+    const computedWidth = width[typeofPresentation] || width.list;
     const renderCompactView = () => {
-        const totalPosts = selectedFeedData.length;
-        const startIndex = (currentPage - 1) * pageSize;
-        const endIndex = Math.min(startIndex + pageSize, totalPosts);
-        const postsToShow = selectedFeedData.slice(startIndex, endIndex);
-
-        if (postsToShow.length === 0) {
-            setError("No hay publicaciones para mostrar.");
-            return null;
-        }
-
-        const width = {
-            listCard: '200px',
-            list: '50px',
-        };
-
-        const computedWidth = width[typeofPresentation] || width.list
-
 
         return (
-            <div
-                style={{
-                    display: "flex",
-                    flexDirection: "column",
-                    gap: "8px",
-                    paddingBottom: "5.5rem",
-                }}
-            >
-                {postsToShow.map((post, index) => {
+            <div className="compact-view">
+                {postsToShow?.map((post, index) => {
                     const isSaved = savedPosts.some(
                         (savedPost) => savedPost.id === post.id
                     );
                     return (
                         <Fragment key={index}>
                             <div
-                                style={{
-                                    padding: "12px",
-                                    border: "1px solid #eaeaea",
-                                    borderRadius: "8px",
-                                    background: "#f9f9f9",
-                                    display: "flex",
-                                    flexDirection: viewportType !== 'desktop' ? "column" : "row",
-                                    alignItems: "center",
-                                    cursor: "pointer",
-                                    transition: "background 0.2s ease",
-                                    gap: '15px'
-
-                                }}
                                 className="rss-item"
                                 onClick={() =>
                                     viewportType !== 'desktop' ? null :
                                         setSelectedPost(selectedPost?.id === post.id ? null : post)
                                 }
                             >
-                                {typeofPresentation !== 'list' &&
+                                {typeofPresentation !== 'list' && (
                                     <Image
                                         alt={post?.title}
                                         src={post?.thumbnailUrl || "error"}
                                         fallback={defaultImage}
                                         loading="lazy"
+                                        className={`thumbnail ${viewportType !== 'desktop' ? "full-width" : ""}`}
                                         style={{
                                             width: viewportType !== 'desktop' ? '100%' : computedWidth,
                                             height: "auto",
                                             objectPosition: "center",
                                             aspectRatio: viewportType !== 'desktop' ? '2/1' : '16/9',
                                         }}
+                                        onLoad={() => { setImagesLoaded(true); }}
+                                        onError={() => { setImagesLoaded(false); }}
                                     />
-                                }
-                                <div style={{ flex: 1, alignSelf: 'self-start', width: '100%' }} >
-                                    <>
-                                        {post && (
-                                            <span style={{ fontWeight: "bold" }}>
-                                                {modifyLinks(post.author || "Unknown")}
-                                            </span>
-                                        )}
-                                        {post?.publishedAt && (
+                                )}
+                                <div className="post-details">
+                                    {post && (
+                                        <span className="author">
+                                            {modifyLinks(post.author || "Unknown")}
+                                        </span>
+                                    )}
+                                    {post?.publishedAt && (
+                                        <time className="published-time">
+                                            {formatDate(post.publishedAt)}
+                                        </time>
+                                    )}
 
-                                            <time style={{ float: 'right' }}>{formatDate(post.publishedAt)}</time>
-
-                                        )}
-                                    </>
-                                    <br />
-                                    <h4 style={{ margin: 0, fontSize: "16px" }}>
+                                    <h4 className="post-headline">
                                         {modifyLinks(post.title)}
                                     </h4>
 
-
-                                    <p style={{ marginTop: "4px", fontSize: "14px", textWrap: 'pretty' }}>
-                                        {modifyLinks(post.description)}
-                                    </p>
-                                    {viewportType !== 'desktop' && post?.link && (
-                                        <a href={post.link} target="_blank" rel="noopener noreferrer">
-                                            <br />
-                                            Continue reading...
-                                        </a>
-                                    )}
+                                    {viewportType !== 'desktop' &&
+                                        (<>
+                                            <p className="post-description">
+                                                {modifyLinks(post.description)}
+                                            </p>
+                                            <a href={post.link} target="_blank" rel="noopener noreferrer" className="continue-reading">
+                                                Continue reading...
+                                            </a>
+                                        </>)}
                                 </div>
                                 <div
-                                    style={{
-                                        cursor: "pointer",
-                                        padding: "0 1rem",
-                                        alignSelf: viewportType !== 'desktop' ? "self-end" : "self-start",
-                                        order: viewportType !== 'desktop' ? '-1' : 'unset',
-                                    }}
+                                    className={`save-icon ${viewportType !== 'desktop' ? "self-end" : "self-start"}`}
                                     onClick={(e) => {
                                         e.stopPropagation();
                                         onSavePost(post);
@@ -186,28 +142,20 @@ const Sidebar: React.FC<SidebarProps> = ({
                         message={error}
                         type="error"
                         showIcon
-                        style={{ marginTop: "16px" }}
+                        className="error-alert"
                     />
                 )}
 
-                {pagination && (
-                    <div
+                {pagination && totalPosts > 5 && (
+                    <div className="pagination-container"
                         style={{
-                            display: "flex",
-                            justifyContent: "center",
-                            placeItems: "self-end",
-                            position: "absolute",
-                            bottom: "0",
-                            width: "100%",
-                            height: "2.5rem",
-                        }}
-                    >
+                            position: dynamicPosition
+                        }}>
                         {pageSize < 10 && (
                             <Button
-                                color="default"
-                                variant="link"
+                                className="pagination-button"
                                 title="Initial page"
-                                onClick={() => setCurrentPage(1)}
+                                onClick={() => { setCurrentPage(1); }}
                                 disabled={currentPage === 1}
                             >
                                 <Icon name="firstPage" />
@@ -218,8 +166,16 @@ const Sidebar: React.FC<SidebarProps> = ({
                             current={currentPage}
                             pageSize={pageSize}
                             total={totalPosts}
-                            onChange={(page) => setCurrentPage(page)}
-                            style={{ marginTop: "16px", textAlign: "center" }}
+                            onChange={(page) => {
+                                setCurrentPage(page);
+                                if (imagesLoaded || typeofPresentation !== 'listCard') {
+                                    window.scrollTo({
+                                        top: 0,
+                                        behavior: "smooth",
+                                    });
+                                }
+                            }}
+                            className="pagination"
                             hideOnSinglePage={true}
                             showSizeChanger={false}
                             showLessItems
@@ -227,8 +183,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 
                         {pageSize < 10 && (
                             <Button
-                                color="default"
-                                variant="link"
+                                className="pagination-button"
                                 title="Last page"
                                 onClick={() => setCurrentPage(Math.ceil(totalPosts / pageSize))}
                                 disabled={currentPage === Math.ceil(totalPosts / pageSize)}
@@ -246,35 +201,14 @@ const Sidebar: React.FC<SidebarProps> = ({
         if (!selectedPost) return null;
 
         return (
-            <div
-                style={{
-                    padding: "12px",
-                    border: "1px solid #eaeaea",
-                    borderRadius: "8px",
-                    background: "#f9f9f9",
-                    display: "flex",
-                    flexDirection: "column",
-                    maxWidth: "845px",
-                    height: "fit-content",
-                }}
-            >
-                <div
-                    style={{
-                        display: "flex",
-                        justifyContent: "space-between",
-                        alignItems: "center",
-                    }}
-                    className="headline"
-                >
-                    <a
-                        href={selectedPost?.link}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                    >
-                        <h4 style={{ margin: 0 }}>{modifyLinks(selectedPost.title)}</h4>
+            <div className="detail-view">
+                <div className="headline">
+                    <a href={selectedPost?.link} target="_blank" rel="noopener noreferrer">
+                        <h4 className="detail-title">
+                            {modifyLinks(selectedPost.title)}
+                        </h4>
                     </a>
-                    <Button color="danger" variant="text" onClick={() => setSelectedPost(null)} icon={<CloseOutlined />} />
-
+                    <Button className="close-button" color="default" variant="text" onClick={() => setSelectedPost(null)} icon={<CloseOutlined />} />
                 </div>
 
                 <Image
@@ -282,21 +216,14 @@ const Sidebar: React.FC<SidebarProps> = ({
                     src={selectedPost?.thumbnailUrl || "error"}
                     fallback={defaultImage}
                     loading="lazy"
-                    style={{ objectPosition: "center" }}
+                    className="detail-image"
+                    onLoad={() => { setImagesLoaded(true); }}
+                    onError={() => { setImagesLoaded(false); }}
                 />
 
-                <div
-                    style={{
-                        display: "flex",
-                        justifyContent: "flex-start",
-                        gap: "1rem",
-                        marginTop: "8px",
-                        fontSize: "14px",
-                        color: "#555",
-                    }}
-                >
+                <div className="post-meta">
                     {selectedPost?.author && (
-                        <span style={{ fontWeight: "bold" }}>
+                        <span className="author">
                             {modifyLinks(selectedPost.author)}
                         </span>
                     )}
@@ -305,12 +232,11 @@ const Sidebar: React.FC<SidebarProps> = ({
                     )}
                 </div>
 
-                <p style={{ marginTop: "8px", textWrap: "pretty" }}>
+                <p className="post-description">
                     {modifyLinks(selectedPost.description)}
                 </p>
-                <br />
                 {selectedPost?.link && (
-                    <a href={selectedPost.link} target="_blank" rel="noopener noreferrer">
+                    <a href={selectedPost.link} target="_blank" rel="noopener noreferrer" className="continue-reading">
                         Continue reading...
                     </a>
                 )}
@@ -319,17 +245,29 @@ const Sidebar: React.FC<SidebarProps> = ({
     };
 
     return (
-        <div
+        <div className="sidebar"
             style={{
-                display: "grid",
                 gridTemplateColumns: selectedPost ? "1fr 1fr" : "1fr",
-                gap: "24px",
-                position: "relative",
-                minHeight: "100vh",
             }}
         >
-            {renderCompactView()}
-            {viewportType === 'desktop' && renderDetailView()}
+
+            {isTourOpen && <Tour
+                open={isTourOpen}
+                onClose={handleTourClose}
+                steps={steps}
+                current={tourStep}
+                onChange={(current) => setTourStep(current)}
+            />}
+
+            {(selectedFeedData.length > 0 || savedPosts.length > 0) ? (
+                <>
+                    {renderCompactView()}
+                    {viewportType === 'desktop' && renderDetailView()}
+                </>
+            ) :
+                <Empty description="No results founded" />
+            }
+
         </div>
     );
 };

@@ -5,7 +5,6 @@ import Sidebar from './Sidebar';
 import { ContentDisplayProps } from '@/types/RSSFeed';
 
 
-
 const ContentDisplay: React.FC<ContentDisplayProps> = ({ categoryLoading, dashboardLoading, categoryError, dashboardError,
     filteredGroupedPosts, collapsed, setSearchTerm, searchTerm, filteredPosts, savedPosts, handleSavePost,
     currentPage, setCurrentPage, setTypeofPresentation, typeofPresentation }) => {
@@ -20,22 +19,40 @@ const ContentDisplay: React.FC<ContentDisplayProps> = ({ categoryLoading, dashbo
 
     const hasResults = Object.keys(filteredGroupedPosts).length > 0;
 
+
     return (
         <>
-            <NavControls collapsed={collapsed} onSearch={setSearchTerm} setTypeofPresentation={setTypeofPresentation} />
+            <NavControls
+                collapsed={collapsed}
+                onSearch={setSearchTerm}
+                setTypeofPresentation={setTypeofPresentation} />
             {searchTerm ? (
                 hasResults ? (
                     Object.entries(filteredGroupedPosts).map(([, posts]) => (
-                        <Sidebar key={posts[0].id} selectedFeedData={posts} onSavePost={handleSavePost}
-                            savedPosts={savedPosts} pagination={false} currentPage={currentPage} setCurrentPage={setCurrentPage}
-                            typeofPresentation={typeofPresentation} />
+                        <Sidebar key={posts[0].id}
+                            selectedFeedData={posts}
+                            onSavePost={handleSavePost}
+                            savedPosts={savedPosts}
+                            pagination={false}
+                            currentPage={currentPage}
+                            setCurrentPage={setCurrentPage}
+                            typeofPresentation={typeofPresentation}
+
+                        />
                     ))
                 ) : (
                     <Empty description="No results founded" />
                 )
             ) : (
-                <Sidebar selectedFeedData={filteredPosts} onSavePost={handleSavePost} savedPosts={savedPosts}
-                    currentPage={currentPage} setCurrentPage={setCurrentPage} typeofPresentation={typeofPresentation} />
+                <Sidebar
+                    selectedFeedData={filteredPosts}
+                    onSavePost={handleSavePost}
+                    savedPosts={savedPosts}
+                    currentPage={currentPage}
+                    setCurrentPage={setCurrentPage}
+                    typeofPresentation={typeofPresentation}
+
+                />
             )}
         </>
     );

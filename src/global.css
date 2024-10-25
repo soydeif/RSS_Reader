@@ -72,35 +72,27 @@
 .header form input {
   background-color: #dfdfed;
   border: 1px solid transparent;
-  /* Color del borde inicial */
   border-radius: 1px;
   padding: 0.5rem;
-  /* Agregado para mejor apariencia */
   transition: border-color 0.3s ease;
-  /* Transición suave para el borde */
 }
 
 .header form input:focus {
   border-color: #593fee;
-  /* Cambia el color del borde al hacer focus */
   outline: none;
-  /* Elimina el contorno predeterminado */
 }
 
 .header form button {
   background-color: #f0eefd;
   border: 1px solid #4d35c9;
   border-radius: 0 5px 0 0;
-  padding: 0.5rem 1rem;
-  /* Agregado para mejor apariencia */
-  transition: background-color 0.3s ease;
-  /* Transición suave para el fondo */
+  padding: 0.5rem 1rem; 
+  transition: background-color 0.3s ease;  
 }
 
 .header form button:hover {
   background-color: #5c45ee;
-  color: white;
-  /* Color de fondo al pasar el mouse */
+  color: white; 
 }
 
 
@@ -442,6 +434,228 @@ figcaption {
   object-position: center;
   width: fit-content;
 }
-.ant-layout-header{
-  background-color: #edeeff !important;
+
+
+/* APP */
+.app-layout {
+  min-height: 100vh;
 }
+.ant-layout{
+  width: 100% !important; /* necesario para sobreescribir la libreria*/
+}
+.sider {
+  background: #edeeff;
+}
+.hamburguer-menu { 
+  padding: 0 1rem;
+ background: #edeeff; 
+}
+.hamburguer-menu-open {
+  padding: 0 1rem;
+  background: #f5f5f5;
+}
+.menu {
+  background: #edeeff;
+}
+.spacer {
+  min-height: 1rem;
+}
+.logo-header {
+  margin: 0 auto;
+}
+.content {
+  margin: 0 16px;
+}
+.content-display-container {
+  border-radius: 8px;
+  min-height: 360px;
+}
+.footer {
+  margin: auto;
+  font-weight: bold;
+  margin-top: 1rem;
+  line-height: 1.6;
+}
+.footer-highlight {
+  color: #3673fe;
+}
+/* APP */
+
+/* SIDEBAR */
+.sidebar {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 24px;
+  position: relative;
+  min-height: 100vh;
+  padding: 16px; 
+}
+
+
+.compact-view {
+  display: flex;
+  flex-direction: column;
+  gap: 16px; 
+}
+
+
+.rss-item {
+  padding: 12px;
+  border: 1px solid #eaeaea;
+  border-radius: 8px;
+  background: #f9f9f9;
+  display: flex;
+  flex-direction: row; 
+  align-items: center;
+  cursor: pointer;
+  transition: background 0.2s ease;
+  gap: 1rem;
+  place-items: flex-start;
+}
+
+.rss-item:hover {
+  background: #f0f0f0; 
+}
+
+
+.thumbnail {
+  object-fit: cover; 
+}
+
+.save-icon {
+  cursor: pointer;
+  padding: 0 1rem;
+}
+
+.published-time {
+  float: right;
+  font-size: 12px; 
+  color: #888; 
+}
+.break-line{
+  display: none;
+}
+
+
+.post-details {
+  flex: 1;
+  width: 100%; 
+}
+
+@media (max-width: 1024px) {
+  .rss-item {
+      flex-direction: column; 
+      align-items: flex-start; 
+  }
+
+  .thumbnail.full-width {
+      width: 100%; 
+  }
+  .sidebar{
+    padding: 0;
+  }
+  .save-icon{
+    order: -1;
+    align-self: self-end
+  }
+
+  .break-line{
+    display: block;
+  }
+  .post-details {
+    display: flex;
+    flex-direction: column;
+  }
+
+}
+
+
+
+.author {
+  font-weight: bold;
+}
+
+.post-headline {
+  margin: 0;
+  font-size: 16px;
+}
+
+.post-description {
+  margin-top: 4px;
+  font-size: 14px;
+}
+
+
+.continue-reading {
+  margin-top: 8px; 
+  color: #007bff; 
+  text-decoration: underline; 
+}
+
+
+
+
+
+.error-alert {
+  margin-top: 16px;
+}
+
+
+.pagination-container {
+  display: flex;  
+  align-items: flex-start;
+  justify-content: center;
+  bottom: 0;
+  width: 100%;
+  height: 2.5rem;
+  margin-top: 2rem;
+}
+
+.pagination-button {
+  margin: 0 8px; 
+}
+
+
+.detail-view {
+  display: flex;
+  padding: 12px;
+  border: 1px solid #eaeaea;
+  border-radius: 8px;
+  background: #f9f9f9;
+  flex-direction: column;
+  max-width: 845px;
+  height: fit-content;
+  text-wrap: pretty;
+  line-height: 1.6;
+}
+
+.headline {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.detail-title {
+  margin: 0;
+}
+
+
+.detail-image {
+  object-fit: cover; 
+}
+
+
+.post-meta {
+  display: flex;
+  gap: 1rem; 
+  margin-top: 8px;
+  font-size: 14px;
+  color: #555;
+}
+
+
+.close-button {
+  color: red; 
+}
+
+/* SIDEBAR */
