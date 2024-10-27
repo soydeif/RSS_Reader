@@ -66,7 +66,6 @@ export interface ContentDisplayProps {
   dashboardError: string | null;
   filteredGroupedPosts: Record<string, FeedItemPost[]>;
   collapsed: boolean;
-  setSearchTerm: (term: string) => void;
   searchTerm: string;
   filteredPosts: FeedItemPost[];
   savedPosts: FeedItemPost[];

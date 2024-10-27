@@ -20,8 +20,8 @@ export const useSidebarLogic = () => {
 
   useEffect(() => {
     if (shouldShowTour === null) {
-      setIsTourOpen(true); // Abre el tour si nunca se ha mostrado
-      localStorage.setItem("shouldShowTour", JSON.stringify(false)); // Establece el valor a false
+      setIsTourOpen(true);
+      localStorage.setItem("shouldShowTour", JSON.stringify(false));
     }
 
     localStorage.setItem("shouldShowTour", JSON.stringify(shouldShowTour));
@@ -93,6 +93,12 @@ export const useSidebarLogic = () => {
     setIsTourOpen(false);
     localStorage.setItem("shouldShowTour", JSON.stringify(false));
   };
+
+  useEffect(() => {
+    if (viewportType !== "desktop") {
+      setSelectedPost(null);
+    }
+  }, [viewportType]);
 
   return {
     formatDate,

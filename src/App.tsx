@@ -13,6 +13,7 @@ import { Layout, Button, Menu } from "antd";
 import { useAppLogic } from "./hooks/useAppLogic";
 import ContentDisplay from "./components/ContentDisplay";
 import Logo from "./components/icons/Logo";
+import NavControls from "./components/NavControls";
 
 const { Header, Content, Footer, Sider } = Layout;
 
@@ -36,7 +37,8 @@ const App: React.FC = () => {
     setCurrentPage,
     typeofPresentation,
     setTypeofPresentation,
-    handleMenuSelect
+    handleMenuSelect,
+    currentSection
   } = useAppLogic();
 
   const menuItems = [
@@ -98,11 +100,20 @@ const App: React.FC = () => {
 
       <Layout>
         <div className="spacer" />
-        <header className="logo-header">
-          <Logo />
+        <header className="logo-header" onClick={() => handleMenuSelect('dashboard')}>
+          <Logo alt="Reaser Logo" />
         </header>
         <Content className="content">
+          {currentSection !== 'dashboard' && <NavControls
+            collapsed={collapsed}
+            onSearch={setSearchTerm}
+            typeofPresentation={typeofPresentation}
+            setTypeofPresentation={setTypeofPresentation} />}
+
           <div className="content-display-container">
+            <div className="current-section">
+              You're visiting <span>{currentSection}</span> section.
+            </div>
             <ContentDisplay
               {...{
                 categoryLoading,
@@ -111,7 +122,6 @@ const App: React.FC = () => {
                 dashboardError,
                 filteredGroupedPosts,
                 collapsed,
-                setSearchTerm,
                 searchTerm,
                 filteredPosts,
                 savedPosts,

@@ -462,6 +462,23 @@ figcaption {
 }
 .logo-header {
   margin: 0 auto;
+  cursor: pointer;
+}
+.current-section{
+  display: block;
+  margin: 2rem 1rem;
+  font-size: medium;
+  font-weight: 400;
+}
+.current-section>span{
+  font-weight: 600;
+    color: #007bff;
+    text-transform: capitalize;
+}
+@media (max-width: 1024px) {
+  .current-section{   
+    margin: 2rem 0rem;
+  }
 }
 .content {
   margin: 0 16px;

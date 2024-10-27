@@ -36,6 +36,7 @@ const mapArticleToFeedItemPost = (
 
 export const useAppLogic = () => {
   const [collapsed, setCollapsed] = useState(false);
+  const [currentSection, setCurrentSection] = useState("Dashboard");
   const [savedPosts, setSavedPosts] = useState<FeedItemPost[]>(() => {
     const savedPostsFromStorage = localStorage.getItem("savedPosts");
     return savedPostsFromStorage ? JSON.parse(savedPostsFromStorage) : [];
@@ -141,7 +142,7 @@ export const useAppLogic = () => {
   const handleMenuSelect = (key: string) => {
     setSearchTerm("");
     setCurrentPage(1);
-
+    setCurrentSection(key);
     if (key === "dashboard") {
       setViewSaved(false);
       handleCategorySelection("dashboard");
@@ -184,5 +185,6 @@ export const useAppLogic = () => {
     typeofPresentation,
     setTypeofPresentation,
     handleMenuSelect,
+    currentSection,
   };
 };

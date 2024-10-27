@@ -1,31 +1,23 @@
 import React from 'react'
 import { Alert, Skeleton, Empty } from 'antd';
-import NavControls from './NavControls';
 import Sidebar from './Sidebar';
 import { ContentDisplayProps } from '@/types/RSSFeed';
 
 
 const ContentDisplay: React.FC<ContentDisplayProps> = ({ categoryLoading, dashboardLoading, categoryError, dashboardError,
-    filteredGroupedPosts, collapsed, setSearchTerm, searchTerm, filteredPosts, savedPosts, handleSavePost,
-    currentPage, setCurrentPage, setTypeofPresentation, typeofPresentation }) => {
+    filteredGroupedPosts, searchTerm, filteredPosts, savedPosts, handleSavePost,
+    currentPage, setCurrentPage, typeofPresentation }) => {
 
     if (categoryLoading || dashboardLoading) {
         return <Skeleton active paragraph={{ rows: 10 }} />;
     }
-
     if (categoryError || dashboardError) {
         return <Alert message={categoryError || dashboardError} type="error" showIcon />;
     }
-
     const hasResults = Object.keys(filteredGroupedPosts).length > 0;
-
 
     return (
         <>
-            <NavControls
-                collapsed={collapsed}
-                onSearch={setSearchTerm}
-                setTypeofPresentation={setTypeofPresentation} />
             {searchTerm ? (
                 hasResults ? (
                     Object.entries(filteredGroupedPosts).map(([, posts]) => (
@@ -43,7 +35,7 @@ const ContentDisplay: React.FC<ContentDisplayProps> = ({ categoryLoading, dashbo
                 ) : (
                     <Empty description="No results founded" />
                 )
-            ) : (
+            ) : filteredPosts.length !== 0 ? (
                 <Sidebar
                     selectedFeedData={filteredPosts}
                     onSavePost={handleSavePost}
@@ -53,7 +45,7 @@ const ContentDisplay: React.FC<ContentDisplayProps> = ({ categoryLoading, dashbo
                     typeofPresentation={typeofPresentation}
 
                 />
-            )}
+            ) : <Empty description="No results founded" />}
         </>
     );
 }
