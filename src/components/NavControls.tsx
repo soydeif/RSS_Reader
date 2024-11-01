@@ -3,19 +3,25 @@ import { Input, Button } from "antd";
 import { MenuOutlined, UnorderedListOutlined } from '@ant-design/icons';
 import { PresentationType } from "@/types/RSSFeed";
 
-
-
 interface SearchAndViewSwitcherProps {
     collapsed: boolean;
+    small: boolean;
     onSearch: (term: string) => void;
     typeofPresentation: string;
     setTypeofPresentation: Dispatch<SetStateAction<PresentationType>>;
 }
 const { Search } = Input;
 
-const NavControls: React.FC<SearchAndViewSwitcherProps> = ({ collapsed, onSearch, setTypeofPresentation, typeofPresentation }) => {
+const NavControls: React.FC<SearchAndViewSwitcherProps> = ({
+    collapsed,
+    onSearch,
+    setTypeofPresentation,
+    typeofPresentation,
+    small = false
+}) => {
     const [searchTerm, setSearchTerm] = useState("");
     const [loading, setLoading] = useState(false);
+
     const handleSearch = async (e: React.FormEvent) => {
         e.preventDefault();
         setLoading(true);
@@ -31,23 +37,23 @@ const NavControls: React.FC<SearchAndViewSwitcherProps> = ({ collapsed, onSearch
     };
 
     return (
-        <form onSubmit={handleSearch} style={{ display: 'flex', alignItems: 'center', padding: !collapsed ? '0 16px' : 0, gap: '1rem' }}>
-            <div
-                className="input-search"
-                style={{ display: 'flex', justifyContent: 'flex-start', flexDirection: 'row', gap: '0.5rem', padding: '2rem 0', flexGrow: 1 }}>
+        <form
+            onSubmit={handleSearch}
+            className={`nav-controls `}
+            style={{ padding: !collapsed ? '0 16px' : 0, justifyContent: small ? 'flex-end' : 'unset', }}
+        >
+            {!small && <div className="input-search" >
                 <Search
                     type="text"
                     value={searchTerm}
                     onChange={(e) => { setSearchTerm(e.target.value) }}
                     placeholder="Search your topic"
-                    style={{ marginRight: '8px' }}
                     loading={loading}
                     enterButton
                 />
-            </div>
+            </div>}
 
-            <div style={{ display: 'flex', gap: '8px' }}
-                className="style-view-btn-content">
+            <div className="style-view-btn-content" style={{ padding: small ? '2rem 0' : '0' }}>
                 <Button
                     icon={<UnorderedListOutlined />}
                     onClick={() => setTypeofPresentation('listCard')}

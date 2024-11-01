@@ -1,38 +1,12 @@
 import { useState, useEffect } from "react";
-import { Article, useFetchNews } from "./useFetchNews";
 import { FeedItemPost } from "@/types/RSSFeed";
 import { store } from "@/store";
 import { addFeed, removeFeed } from "@/rssSlice";
-import { useFetchDashboardNews } from "./useDashboardNews";
+import { useDashboard } from "./useDashboard";
 import useViewport from "./useViewport";
+import { useFetchMyFeeds } from "./useFetchMyFeeds";
 
 type PresentationType = "listCard" | "list";
-
-const categories = [
-  { key: "business", label: "Business" },
-  { key: "entertainment", label: "Entertainment" },
-  { key: "general", label: "General" },
-  { key: "health", label: "Health" },
-  { key: "science", label: "Science" },
-  { key: "sports", label: "Sports" },
-  { key: "technology", label: "Technology" },
-];
-
-const mapArticleToFeedItemPost = (
-  article: Article,
-  category: string
-): FeedItemPost => ({
-  id: article.url,
-  title: article.title,
-  description: article.description,
-  content: article.content || "",
-  link: article.url,
-  thumbnailUrl: article.urlToImage || "",
-  feedTitle: article.source.name,
-  publishedAt: article.publishedAt,
-  author: article?.author,
-  category: category,
-});
 
 export const useAppLogic = () => {
   const [collapsed, setCollapsed] = useState(false);
@@ -63,16 +37,12 @@ export const useAppLogic = () => {
   const [currentPage, setCurrentPage] = useState(1);
 
   const {
-    news: categoryNews,
-    loading: categoryLoading,
-    error: categoryError,
-    fetchNewsData,
-  } = useFetchNews();
-  const {
     news: dashboardNews,
     loading: dashboardLoading,
     error: dashboardError,
-  } = useFetchDashboardNews();
+  } = useDashboard();
+
+  const { feeds, selectedFeed, changeFeed, error, loading } = useFetchMyFeeds();
 
   useEffect(() => {
     localStorage.setItem("savedPosts", JSON.stringify(savedPosts));
@@ -100,44 +70,17 @@ export const useAppLogic = () => {
     });
   };
 
-  const handleCategorySelection = async (categoryKey: string) => {
-    if (categoryKey === "dashboard") {
-      setCurrentPage(1);
-      setSelectedCategory(null);
-    } else {
-      setCurrentPage(1);
-      setSelectedCategory(categoryKey);
-      await fetchNewsData(categoryKey);
-    }
+  const handleCategorySelection = (categoryKey: string) => {
+    setCurrentPage(1);
+    setSelectedCategory(categoryKey);
   };
-
   const filteredPosts = viewSaved
     ? savedPosts.filter((post) =>
         post.title.toLowerCase().includes(searchTerm.toLowerCase())
       )
-    : selectedCategory
-    ? categoryNews.map((article) =>
-        mapArticleToFeedItemPost(article, selectedCategory)
-      )
-    : dashboardNews.map((article: Article) =>
-        mapArticleToFeedItemPost(article, "dashboard")
+    : selectedFeed.filter((post) =>
+        post.title.toLowerCase().includes(searchTerm.toLowerCase())
       );
-
-  const groupedPosts = (posts: FeedItemPost[]) => {
-    return categories.reduce((acc, category) => {
-      const filteredByCategory = posts.filter(
-        (post) =>
-          post.title.toLowerCase().includes(searchTerm.toLowerCase()) &&
-          post.category === category.key
-      );
-      if (filteredByCategory.length > 0) {
-        acc[category.label] = filteredByCategory;
-      }
-      return acc;
-    }, {} as Record<string, FeedItemPost[]>);
-  };
-
-  const filteredGroupedPosts = groupedPosts(filteredPosts);
 
   const handleMenuSelect = (key: string) => {
     setSearchTerm("");
@@ -168,17 +111,9 @@ export const useAppLogic = () => {
     searchTerm,
     setSearchTerm,
     handleSavePost,
-    categories,
-    mapArticleToFeedItemPost,
-    categoryNews,
     dashboardNews,
-    categoryLoading,
     dashboardLoading,
-    categoryError,
     dashboardError,
-    fetchNewsData,
-    filteredGroupedPosts,
-    groupedPosts,
     filteredPosts,
     currentPage,
     setCurrentPage,
@@ -186,5 +121,10 @@ export const useAppLogic = () => {
     setTypeofPresentation,
     handleMenuSelect,
     currentSection,
+    feeds,
+    selectedFeed,
+    changeFeed,
+    error,
+    loading,
   };
 };

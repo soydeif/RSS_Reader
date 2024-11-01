@@ -1,7 +1,12 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Dispatch, SetStateAction } from "react";
 import type { TourProps } from "antd";
 
 export interface RSSItem {
+  description: string;
+  image?: string;
+  thumbnailUrl?: string;
+  pubDate?: string;
   title: string;
   link: string;
   contentSnippet: string;
@@ -13,8 +18,19 @@ export interface RSSFeed {
   items: RSSItem[];
 }
 
+export interface Myfeedprops {
+  thumbnailUrl: string;
+  content: any;
+  link: string;
+  title: string | Node;
+  description: string;
+  id: string;
+  url: string;
+  category: string;
+}
+
 export interface FeedListProps {
-  feeds: Array<{ id: string; title: string; url: string }>;
+  feeds: Array<{ id: string; title: string; link: string }>;
   activeFeedIndex: number | null;
   onFeedClick: (url: string, index: number) => void;
   onDeleteFeed: (feedId: string) => void;
@@ -43,41 +59,38 @@ export interface PostsProps {
 }
 
 export type FeedItemPost = {
+  imageSource: string;
   id: string;
   title: string;
+  link: string;
   description: string;
   content: string;
+  publishedAt: string;
   feedTitle: string;
-  videoId?: string;
-  thumbnailUrl?: string;
-  link?: string;
-  url?: string;
-  publishedAt?: string;
+  thumbnailUrl: string;
   author?: string;
+  url: string;
   category?: string;
 };
 
 export type PresentationType = "listCard" | "list";
 
 export interface ContentDisplayProps {
-  categoryLoading: boolean;
-  dashboardLoading: boolean;
-  categoryError: string | null;
-  dashboardError: string | null;
-  filteredGroupedPosts: Record<string, FeedItemPost[]>;
-  collapsed: boolean;
-  searchTerm: string;
-  filteredPosts: FeedItemPost[];
+  loading: boolean;
+  error: string | null;
   savedPosts: FeedItemPost[];
   handleSavePost: (post: FeedItemPost) => void;
   currentPage: number;
   setCurrentPage: (page: number) => void;
   typeofPresentation: PresentationType;
   setTypeofPresentation: Dispatch<SetStateAction<PresentationType>>;
+  feed: any;
 }
 
-export interface SidebarProps {
-  selectedFeedData: FeedItemPost[];
+export interface FeedDisplayProps {
+  selectedFeedData:
+    | FeedItemPost[]
+    | { title: string; link: string; contentSnippet: string; pubDate?: string };
   savedPosts: FeedItemPost[];
   onSavePost: (post: FeedItemPost) => void;
   pagination?: boolean;

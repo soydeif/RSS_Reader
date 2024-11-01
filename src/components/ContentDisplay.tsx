@@ -1,53 +1,42 @@
-import React from 'react'
-import { Alert, Skeleton, Empty } from 'antd';
-import Sidebar from './Sidebar';
-import { ContentDisplayProps } from '@/types/RSSFeed';
+import React from "react";
+import { Alert, Skeleton, Empty } from "antd";
+import FeedDisplay from "./FeedDisplay";
+import { ContentDisplayProps } from "@/types/RSSFeed";
 
-
-const ContentDisplay: React.FC<ContentDisplayProps> = ({ categoryLoading, dashboardLoading, categoryError, dashboardError,
-    filteredGroupedPosts, searchTerm, filteredPosts, savedPosts, handleSavePost,
-    currentPage, setCurrentPage, typeofPresentation }) => {
-
-    if (categoryLoading || dashboardLoading) {
+const ContentDisplay: React.FC<ContentDisplayProps> = ({
+    savedPosts,
+    handleSavePost,
+    currentPage,
+    setCurrentPage,
+    typeofPresentation,
+    feed,
+    error,
+    loading,
+}) => {
+    if (loading) {
         return <Skeleton active paragraph={{ rows: 10 }} />;
     }
-    if (categoryError || dashboardError) {
-        return <Alert message={categoryError || dashboardError} type="error" showIcon />;
+    if (error) {
+        return <Alert message={error} type="error" showIcon />;
     }
-    const hasResults = Object.keys(filteredGroupedPosts).length > 0;
 
     return (
         <>
-            {searchTerm ? (
-                hasResults ? (
-                    Object.entries(filteredGroupedPosts).map(([, posts]) => (
-                        <Sidebar key={posts[0].id}
-                            selectedFeedData={posts}
-                            onSavePost={handleSavePost}
-                            savedPosts={savedPosts}
-                            pagination={false}
-                            currentPage={currentPage}
-                            setCurrentPage={setCurrentPage}
-                            typeofPresentation={typeofPresentation}
-
-                        />
-                    ))
-                ) : (
-                    <Empty description="No results founded" />
-                )
-            ) : filteredPosts.length !== 0 ? (
-                <Sidebar
-                    selectedFeedData={filteredPosts}
+            {feed.length > 0 ? (
+                <FeedDisplay
+                    selectedFeedData={feed}
                     onSavePost={handleSavePost}
                     savedPosts={savedPosts}
+                    pagination={true}
                     currentPage={currentPage}
                     setCurrentPage={setCurrentPage}
                     typeofPresentation={typeofPresentation}
-
                 />
-            ) : <Empty description="No results founded" />}
+            ) : (
+                <Empty description="No results found" />
+            )}
         </>
     );
-}
+};
 
-export default ContentDisplay
+export default ContentDisplay;

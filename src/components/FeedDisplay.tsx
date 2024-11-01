@@ -1,12 +1,12 @@
 import React, { Fragment } from "react";
-import { SidebarProps } from "@/types/RSSFeed";
+import { FeedDisplayProps } from "@/types/RSSFeed";
 import { Pagination, Alert, Button, Image, Empty, Tour } from "antd";
 import { CloseOutlined } from "@ant-design/icons";
 import Icon from "./icons/icons";
-import { useSidebarLogic } from "@/hooks/useSidebarLogic";
+import { useDisplayLogic } from "@/hooks/useDisplayLogic";
 
 
-const Sidebar: React.FC<SidebarProps> = ({
+const FeedDisplay: React.FC<FeedDisplayProps> = ({
     selectedFeedData,
     savedPosts,
     onSavePost,
@@ -32,13 +32,13 @@ const Sidebar: React.FC<SidebarProps> = ({
         pageSize,
         defaultImage,
         steps,
-        handleTourClose
-    } = useSidebarLogic();
+        handleTourClose,
+    } = useDisplayLogic();
 
-    const totalPosts = selectedFeedData.length;
+    const totalPosts = Array.isArray(selectedFeedData) ? selectedFeedData.length : 0;
     const startIndex = (currentPage - 1) * pageSize;
     const endIndex = Math.min(startIndex + pageSize, totalPosts);
-    const postsToShow = selectedFeedData.slice(startIndex, endIndex);
+    const postsToShow = Array.isArray(selectedFeedData) ? selectedFeedData.slice(startIndex, endIndex) : [];
 
     const width = {
         listCard: "200px",
@@ -83,7 +83,7 @@ const Sidebar: React.FC<SidebarProps> = ({
                                 {typeofPresentation !== 'list' && (
                                     <Image
                                         alt={post?.title}
-                                        src={post?.thumbnailUrl || "error"}
+                                        src={post?.thumbnailUrl || post?.imageSource || "error"}
                                         fallback={defaultImage}
                                         loading="lazy"
                                         className={`thumbnail ${viewportType !== 'desktop' ? "full-width" : ""}`}
@@ -116,7 +116,7 @@ const Sidebar: React.FC<SidebarProps> = ({
                                     {viewportType !== 'desktop' &&
                                         (<>
                                             <p className="post-description">
-                                                {modifyLinks(post.description)}
+                                                {modifyLinks(post.content)}
                                             </p>
                                             <a href={post.link} target="_blank" rel="noopener noreferrer" className="continue-reading">
                                                 Continue reading...
@@ -128,6 +128,7 @@ const Sidebar: React.FC<SidebarProps> = ({
                                     onClick={(e) => {
                                         e.stopPropagation();
                                         onSavePost(post);
+
                                     }}
                                 >
                                     {isSaved ? <Icon name="save" /> : <Icon name="saved" />}
@@ -213,7 +214,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 
                 <Image
                     alt={selectedPost?.title}
-                    src={selectedPost?.thumbnailUrl || "error"}
+                    src={selectedPost?.thumbnailUrl || selectedPost?.imageSource || "error"}
                     fallback={defaultImage}
                     loading="lazy"
                     className="detail-image"
@@ -233,7 +234,7 @@ const Sidebar: React.FC<SidebarProps> = ({
                 </div>
 
                 <p className="post-description">
-                    {modifyLinks(selectedPost.description)}
+                    {modifyLinks(selectedPost.content)}
                 </p>
                 {selectedPost?.link && (
                     <a href={selectedPost.link} target="_blank" rel="noopener noreferrer" className="continue-reading">
@@ -243,6 +244,7 @@ const Sidebar: React.FC<SidebarProps> = ({
             </div>
         );
     };
+
 
     return (
         <div className="sidebar"
@@ -259,17 +261,19 @@ const Sidebar: React.FC<SidebarProps> = ({
                 onChange={(current) => setTourStep(current)}
             />}
 
-            {(selectedFeedData.length > 0 || savedPosts.length > 0) ? (
+            {(Array.isArray(selectedFeedData) && selectedFeedData.length > 0)
+                || (Array.isArray(savedPosts) && savedPosts.length > 0) ? (
                 <>
                     {renderCompactView()}
                     {viewportType === 'desktop' && renderDetailView()}
                 </>
-            ) :
-                <Empty description="No results founded" />
-            }
+            ) : (
+                <Empty description="No results found" />
+            )}
+
 
         </div>
     );
 };
 
-export default Sidebar;
+export default FeedDisplay;

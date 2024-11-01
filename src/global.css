@@ -498,7 +498,7 @@ figcaption {
 }
 /* APP */
 
-/* SIDEBAR */
+/* FEED DISPLAY */
 .sidebar {
   display: grid;
   grid-template-columns: 1fr;
@@ -566,7 +566,8 @@ figcaption {
   }
 
   .thumbnail.full-width {
-      width: 100%; 
+    width: 100%; 
+     min-height: 331px;
   }
   .sidebar{
     padding: 0;
@@ -675,4 +676,38 @@ figcaption {
   color: red; 
 }
 
-/* SIDEBAR */
+/* FEED DISPLAY */
+
+/* NAVCONTROL */
+
+.nav-controls {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.input-search {
+  display: flex;
+  justify-content: flex-start;
+  flex-direction: row;
+  gap: 0.5rem;
+  padding: 2rem 0;
+  flex-grow: 1; 
+}
+
+.input-search .ant-input {
+  margin-right: 8px; 
+}
+
+.style-view-btn-content {
+  display: flex;
+  gap: 8px; 
+}
+
+
+.active-button {
+  background-color: #1890ff; 
+  color: white; 
+}
+
+/* NAVCONTROL */
