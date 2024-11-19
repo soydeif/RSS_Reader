@@ -2,9 +2,8 @@ import { useState, useEffect } from "react";
 import { FeedItemPost } from "@/types/RSSFeed";
 import { store } from "@/store";
 import { addFeed, removeFeed } from "@/rssSlice";
-import { useDashboard } from "./useDashboard";
 import useViewport from "./useViewport";
-import { useFetchMyFeeds } from "./useFetchMyFeeds";
+import { useFeeds } from "./useFeeds";
 
 type PresentationType = "listCard" | "list";
 
@@ -36,13 +35,7 @@ export const useAppLogic = () => {
   const viewportType = useViewport();
   const [currentPage, setCurrentPage] = useState(1);
 
-  const {
-    news: dashboardNews,
-    loading: dashboardLoading,
-    error: dashboardError,
-  } = useDashboard();
-
-  const { feeds, selectedFeed, changeFeed, error, loading } = useFetchMyFeeds();
+  const { feeds, selectedFeed, changeFeed, error, loading } = useFeeds();
 
   useEffect(() => {
     localStorage.setItem("savedPosts", JSON.stringify(savedPosts));
@@ -86,14 +79,11 @@ export const useAppLogic = () => {
     setSearchTerm("");
     setCurrentPage(1);
     setCurrentSection(key);
-    if (key === "dashboard") {
-      setViewSaved(false);
-      handleCategorySelection("dashboard");
-    } else if (key === "saved") {
-      setViewSaved(true);
-    } else {
-      setViewSaved(false);
-      handleCategorySelection(key);
+    const isSavedView = key === "saved";
+    setViewSaved(isSavedView);
+    if (!isSavedView) {
+      const category = key === "dashboard" ? "dashboard" : key;
+      handleCategorySelection(category);
     }
     if (viewportType !== "desktop") {
       setCollapsed(!collapsed);
@@ -104,25 +94,17 @@ export const useAppLogic = () => {
     collapsed,
     setCollapsed,
     savedPosts,
-    setSavedPosts,
     selectedCategory,
-    setSelectedCategory,
-    viewSaved,
-    searchTerm,
     setSearchTerm,
-    handleSavePost,
-    dashboardNews,
-    dashboardLoading,
-    dashboardError,
-    filteredPosts,
-    currentPage,
-    setCurrentPage,
     typeofPresentation,
     setTypeofPresentation,
     handleMenuSelect,
     currentSection,
+    handleSavePost,
+    currentPage,
+    setCurrentPage,
     feeds,
-    selectedFeed,
+    filteredPosts,
     changeFeed,
     error,
     loading,

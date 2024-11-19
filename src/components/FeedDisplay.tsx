@@ -14,6 +14,7 @@ const FeedDisplay: React.FC<FeedDisplayProps> = ({
     currentPage = 1,
     setCurrentPage,
     typeofPresentation,
+    setCollapsed
 }) => {
 
     const {
@@ -75,15 +76,18 @@ const FeedDisplay: React.FC<FeedDisplayProps> = ({
                         <Fragment key={index}>
                             <div
                                 className="rss-item"
-                                onClick={() =>
-                                    viewportType !== 'desktop' ? null :
-                                        setSelectedPost(selectedPost?.id === post.id ? null : post)
-                                }
+                                onClick={() => {
+                                    if (viewportType === 'desktop') {
+                                        setSelectedPost(selectedPost?.id === post.id ? null : post);
+                                        setCollapsed(true);
+                                    }
+                                }}
+
                             >
                                 {typeofPresentation !== 'list' && (
                                     <Image
                                         alt={post?.title}
-                                        src={post?.thumbnailUrl || post?.imageSource || "error"}
+                                        src={post?.thumbnailurl || post?.imagesource || "error"}
                                         fallback={defaultImage}
                                         loading="lazy"
                                         className={`thumbnail ${viewportType !== 'desktop' ? "full-width" : ""}`}
@@ -100,12 +104,12 @@ const FeedDisplay: React.FC<FeedDisplayProps> = ({
                                 <div className="post-details">
                                     {post && (
                                         <span className="author">
-                                            {modifyLinks(post.author || "Unknown")}
+                                            {modifyLinks(post.author)}
                                         </span>
                                     )}
-                                    {post?.publishedAt && (
+                                    {post?.publishedat && (
                                         <time className="published-time">
-                                            {formatDate(post.publishedAt)}
+                                            {formatDate(post.publishedat)}
                                         </time>
                                     )}
 
@@ -114,9 +118,11 @@ const FeedDisplay: React.FC<FeedDisplayProps> = ({
                                     </h4>
 
                                     {viewportType !== 'desktop' &&
+
                                         (<>
                                             <p className="post-description">
-                                                {modifyLinks(post.content)}
+                                                {modifyLinks(post.content !== "[object Object]" || post.description !== '' ?
+                                                    post.content : post.description)}
                                             </p>
                                             <a href={post.link} target="_blank" rel="noopener noreferrer" className="continue-reading">
                                                 Continue reading...
@@ -209,12 +215,13 @@ const FeedDisplay: React.FC<FeedDisplayProps> = ({
                             {modifyLinks(selectedPost.title)}
                         </h4>
                     </a>
-                    <Button className="close-button" color="default" variant="text" onClick={() => setSelectedPost(null)} icon={<CloseOutlined />} />
+                    <Button className="close-button" color="default" variant="text"
+                        onClick={() => setSelectedPost(null)} icon={<CloseOutlined />} />
                 </div>
 
                 <Image
                     alt={selectedPost?.title}
-                    src={selectedPost?.thumbnailUrl || selectedPost?.imageSource || "error"}
+                    src={selectedPost?.thumbnailurl || selectedPost?.imagesource || "error"}
                     fallback={defaultImage}
                     loading="lazy"
                     className="detail-image"
@@ -223,13 +230,13 @@ const FeedDisplay: React.FC<FeedDisplayProps> = ({
                 />
 
                 <div className="post-meta">
-                    {selectedPost?.author && (
+                    {selectedPost?.author !== 'Unknown Author' && (
                         <span className="author">
                             {modifyLinks(selectedPost.author)}
                         </span>
                     )}
-                    {selectedPost?.publishedAt && (
-                        <time>{formatDate(selectedPost.publishedAt)}</time>
+                    {selectedPost?.publishedat && (
+                        <time>{formatDate(selectedPost.publishedat)}</time>
                     )}
                 </div>
 

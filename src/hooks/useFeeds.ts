@@ -6,9 +6,9 @@ interface ContentGroupItem {
   link: string;
   description: string;
   content: string;
-  imageSource: string | null;
+  imagesource: string | null;
   author: string;
-  publishedAt: string;
+  publishedat: string;
   favorite: number;
 }
 
@@ -16,7 +16,7 @@ interface Myfeedprops {
   id: number;
   url: string;
   category: string;
-  feedTitle: string;
+  feedtitle: string;
   contentGroup: ContentGroupItem[];
 }
 
@@ -24,13 +24,11 @@ interface FetchResponse {
   feeds: Myfeedprops[];
 }
 
-export const useFetchMyFeeds = () => {
+export const useFeeds = () => {
   const [feeds, setFeeds] = useState<Myfeedprops[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
-  const [selectedFeed, setSelectedFeed] = useState<ContentGroupItem[]>(
-    feeds[0]?.contentGroup || []
-  );
+  const [selectedFeed, setSelectedFeed] = useState<ContentGroupItem[]>([]);
 
   useEffect(() => {
     const fetchFeeds = async () => {
@@ -38,7 +36,9 @@ export const useFetchMyFeeds = () => {
       setError(null);
 
       try {
-        const response = await fetch("http://localhost:3000/api/myfeeds");
+        const response = await fetch(
+          "https://reaserapi-production.up.railway.app/api/myfeeds"
+        );
         if (!response.ok) {
           throw new Error("Error al obtener la lista de feeds");
         }
@@ -56,7 +56,6 @@ export const useFetchMyFeeds = () => {
         setLoading(false);
       }
     };
-
     fetchFeeds();
   }, []);
 

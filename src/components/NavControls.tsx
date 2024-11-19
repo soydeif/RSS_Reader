@@ -40,7 +40,10 @@ const NavControls: React.FC<SearchAndViewSwitcherProps> = ({
         <form
             onSubmit={handleSearch}
             className={`nav-controls `}
-            style={{ padding: !collapsed ? '0 16px' : 0, justifyContent: small ? 'flex-end' : 'unset', }}
+            style={{
+                padding: !collapsed ? '0 16px' : 0,
+                justifyContent: small ? 'flex-end' : 'unset',
+            }}
         >
             {!small && <div className="input-search" >
                 <Search
@@ -53,7 +56,8 @@ const NavControls: React.FC<SearchAndViewSwitcherProps> = ({
                 />
             </div>}
 
-            <div className="style-view-btn-content" style={{ padding: small ? '2rem 0' : '0' }}>
+            <div className="style-view-btn-content"
+                style={{ padding: small ? '2rem 0' : '0' }}>
                 <Button
                     icon={<UnorderedListOutlined />}
                     onClick={() => setTypeofPresentation('listCard')}

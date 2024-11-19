@@ -12,6 +12,7 @@ const ContentDisplay: React.FC<ContentDisplayProps> = ({
     feed,
     error,
     loading,
+    setCollapsed
 }) => {
     if (loading) {
         return <Skeleton active paragraph={{ rows: 10 }} />;
@@ -31,6 +32,7 @@ const ContentDisplay: React.FC<ContentDisplayProps> = ({
                     currentPage={currentPage}
                     setCurrentPage={setCurrentPage}
                     typeofPresentation={typeofPresentation}
+                    setCollapsed={setCollapsed}
                 />
             ) : (
                 <Empty description="No results found" />

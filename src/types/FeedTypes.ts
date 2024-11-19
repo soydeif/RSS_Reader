@@ -4,9 +4,9 @@ export interface ContentGroupItem {
   link: string;
   description: string;
   content: string;
-  imageSource: string | null;
+  imagesource: string | null;
   author: string;
-  publishedAt: string;
+  publishedat: string;
   favorite: number;
 }
 
@@ -14,7 +14,7 @@ export interface Myfeedprops {
   id: number;
   url: string;
   category: string;
-  feedTitle: string;
+  feedtitle: string;
   contentGroup: ContentGroupItem[];
 }
 

@@ -41,7 +41,7 @@ export interface PostItemProps {
   item: {
     title: string;
     description: string;
-    feedTitle: string;
+    feedtitle: string;
     videoId?: string;
   };
   isActive?: boolean;
@@ -59,16 +59,16 @@ export interface PostsProps {
 }
 
 export type FeedItemPost = {
-  imageSource: string;
+  imagesource: string;
   id: string;
   title: string;
   link: string;
   description: string;
   content: string;
-  publishedAt: string;
-  feedTitle: string;
-  thumbnailUrl: string;
-  author?: string;
+  publishedat: string;
+  feedtitle: string;
+  thumbnailurl: string;
+  author: string;
   url: string;
   category?: string;
 };
@@ -77,6 +77,7 @@ export type PresentationType = "listCard" | "list";
 
 export interface ContentDisplayProps {
   loading: boolean;
+  setCollapsed: (arg: boolean) => void;
   error: string | null;
   savedPosts: FeedItemPost[];
   handleSavePost: (post: FeedItemPost) => void;
@@ -97,4 +98,5 @@ export interface FeedDisplayProps {
   currentPage?: number | undefined;
   setCurrentPage: (page: number) => void;
   typeofPresentation: PresentationType;
+  setCollapsed: (arg: boolean) => void;
 }

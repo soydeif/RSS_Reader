@@ -86,13 +86,13 @@
   background-color: #f0eefd;
   border: 1px solid #4d35c9;
   border-radius: 0 5px 0 0;
-  padding: 0.5rem 1rem; 
-  transition: background-color 0.3s ease;  
+  padding: 0.5rem 1rem;
+  transition: background-color 0.3s ease;
 }
 
 .header form button:hover {
   background-color: #5c45ee;
-  color: white; 
+  color: white;
 }
 
 
@@ -403,11 +403,11 @@ figcaption {
 
 ::-webkit-scrollbar {
   width: 12px;
-   background: #dfdfed; 
+  background: #dfdfed;
 }
 
 ::-webkit-scrollbar-track {
-  background: #dfdfed; 
+  background: #dfdfed;
 }
 
 ::-webkit-scrollbar-thumb {
@@ -416,8 +416,9 @@ figcaption {
 }
 
 * {
-  scrollbar-width: thin;  
+  scrollbar-width: thin;
 }
+
 .logo {
   display: flex;
   justify-content: center;
@@ -440,62 +441,78 @@ figcaption {
 .app-layout {
   min-height: 100vh;
 }
-.ant-layout{
-  width: 100% !important; /* necesario para sobreescribir la libreria*/
+
+.ant-layout {
+  width: 100% !important;
+  /* necesario para sobreescribir la libreria*/
 }
+
 .sider {
   background: #edeeff;
 }
-.hamburguer-menu { 
+
+.hamburguer-menu {
   padding: 0 1rem;
- background: #edeeff; 
+  background: #edeeff;
 }
+
 .hamburguer-menu-open {
   padding: 0 1rem;
   background: #f5f5f5;
 }
+
 .menu {
   background: #edeeff;
 }
+
 .spacer {
   min-height: 1rem;
 }
+
 .logo-header {
   margin: 0 auto;
   cursor: pointer;
 }
-.current-section{
+
+.current-section {
   display: block;
   margin: 2rem 1rem;
   font-size: medium;
   font-weight: 400;
 }
-.current-section>span{
+
+.current-section>span {
   font-weight: 600;
-    color: #007bff;
-    text-transform: capitalize;
+  color: #007bff;
+  text-transform: capitalize;
 }
+
 @media (max-width: 1024px) {
-  .current-section{   
+  .current-section {
     margin: 2rem 0rem;
   }
 }
+
 .content {
   margin: 0 16px;
 }
+
 .content-display-container {
   border-radius: 8px;
   min-height: 360px;
 }
+
 .footer {
   margin: auto;
   font-weight: bold;
   margin-top: 1rem;
   line-height: 1.6;
 }
+
 .footer-highlight {
   color: #3673fe;
 }
+
 /* APP */
 
 /* FEED DISPLAY */
@@ -505,14 +522,14 @@ figcaption {
   gap: 24px;
   position: relative;
   min-height: 100vh;
-  padding: 16px; 
+  padding: 16px;
 }
 
 
 .compact-view {
   display: flex;
   flex-direction: column;
-  gap: 16px; 
+  gap: 16px;
 }
 
 
@@ -522,7 +539,7 @@ figcaption {
   border-radius: 8px;
   background: #f9f9f9;
   display: flex;
-  flex-direction: row; 
+  flex-direction: row;
   align-items: center;
   cursor: pointer;
   transition: background 0.2s ease;
@@ -531,12 +548,12 @@ figcaption {
 }
 
 .rss-item:hover {
-  background: #f0f0f0; 
+  background: #f0f0f0;
 }
 
 
 .thumbnail {
-  object-fit: cover; 
+  object-fit: cover;
 }
 
 .save-icon {
@@ -546,40 +563,44 @@ figcaption {
 
 .published-time {
   float: right;
-  font-size: 12px; 
-  color: #888; 
+  font-size: 12px;
+  color: #888;
 }
-.break-line{
+
+.break-line {
   display: none;
 }
 
 
 .post-details {
   flex: 1;
-  width: 100%; 
+  width: 100%;
 }
 
 @media (max-width: 1024px) {
   .rss-item {
-      flex-direction: column; 
-      align-items: flex-start; 
+    flex-direction: column;
+    align-items: flex-start;
   }
 
   .thumbnail.full-width {
-    width: 100%; 
-     min-height: 331px;
+    width: 100%;
+    min-height: 331px;
   }
-  .sidebar{
+
+  .sidebar {
     padding: 0;
   }
-  .save-icon{
+
+  .save-icon {
     order: -1;
     align-self: self-end
   }
 
-  .break-line{
+  .break-line {
     display: block;
   }
+
   .post-details {
     display: flex;
     flex-direction: column;
@@ -605,9 +626,9 @@ figcaption {
 
 
 .continue-reading {
-  margin-top: 8px; 
-  color: #007bff; 
-  text-decoration: underline; 
+  margin-top: 8px;
+  color: #007bff;
+  text-decoration: underline;
 }
 
 
@@ -620,7 +641,7 @@ figcaption {
 
 
 .pagination-container {
-  display: flex;  
+  display: flex;
   align-items: flex-start;
   justify-content: center;
   bottom: 0;
@@ -630,7 +651,7 @@ figcaption {
 }
 
 .pagination-button {
-  margin: 0 8px; 
+  margin: 0 8px;
 }
 
 
@@ -659,13 +680,13 @@ figcaption {
 
 
 .detail-image {
-  object-fit: cover; 
+  object-fit: cover;
 }
 
 
 .post-meta {
   display: flex;
-  gap: 1rem; 
+  gap: 1rem;
   margin-top: 8px;
   font-size: 14px;
   color: #555;
@@ -673,7 +694,7 @@ figcaption {
 
 
 .close-button {
-  color: red; 
+  color: red;
 }
 
 /* FEED DISPLAY */
@@ -692,22 +713,80 @@ figcaption {
   flex-direction: row;
   gap: 0.5rem;
   padding: 2rem 0;
-  flex-grow: 1; 
+  flex-grow: 1;
 }
 
 .input-search .ant-input {
-  margin-right: 8px; 
+  margin-right: 8px;
 }
 
 .style-view-btn-content {
   display: flex;
-  gap: 8px; 
+  gap: 8px;
 }
 
 
 .active-button {
-  background-color: #1890ff; 
-  color: white; 
+  background-color: #1890ff;
+  color: white;
 }
 
 /* NAVCONTROL */
+
+/*DASHBOARD CONTENT*/
+.dashboard-content {
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 20px;
+  background: #f9f9f9;
+  border-radius: 8px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.dashboard-steps {
+  margin-bottom: 24px;
+}
+
+.step-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.step-instruction {
+  font-size: 16px;
+  margin-bottom: 8px;
+  color: #555;
+}
+
+.example-url {
+  background-color: #e8f5e9;
+  padding: 4px 8px;
+  border-radius: 4px;
+  color: #888;
+  margin-bottom: 16px;
+}
+
+.search-input {
+  width: 100%;
+  max-width: 400px;
+  margin-top: 16px;
+}
+
+.step-button {
+  margin-top: 16px;
+  width: 120px;
+}
+
+.back-button {
+  margin-top: 16px;
+  width: 100px;
+}
+
+.error-text {
+  color: #ff4d4f;
+  font-size: 14px;
+  margin-top: 8px;
+}
+/*DASHBOARD CONTENT*/

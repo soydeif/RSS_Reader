@@ -15,7 +15,6 @@ import ContentDisplay from "./components/ContentDisplay";
 import Logo from "./components/icons/Logo";
 import NavControls from "./components/NavControls";
 
-
 const { Header, Content, Footer, Sider } = Layout;
 
 const App: React.FC = () => {
@@ -36,18 +35,15 @@ const App: React.FC = () => {
     filteredPosts,
     changeFeed,
     error,
-    loading
+    loading,
   } = useAppLogic();
-
-
-
 
   const menuItems = [
     {
       key: "dashboard",
       icon: <HomeOutlined />,
       label: "Dashboard",
-      onClick: () => handleMenuSelect('dashboard')
+      onClick: () => handleMenuSelect("dashboard"),
     },
     {
       key: "Feeds",
@@ -55,22 +51,18 @@ const App: React.FC = () => {
       label: "Feeds",
       children: feeds.map((feed) => ({
         key: feed.id.toString(),
-        label: (
-          <span>
-            {feed.feedTitle}
-          </span>
-        ),
-      }))
+        label: <span>{feed.feedtitle}</span>,
+        onClick: () => handleMenuSelect(feed.feedtitle),
+      })),
     },
     {
       key: "saved",
       icon: <BookOutlined />,
       label: "Saved",
       disabled: savedPosts.length === 0,
-      onClick: () => handleMenuSelect('saved')
+      onClick: () => handleMenuSelect("saved"),
     },
   ];
-
 
   return (
     <Layout className="app-layout">
@@ -83,7 +75,9 @@ const App: React.FC = () => {
         collapsedWidth={1}
         className="sider"
       >
-        <Header className={collapsed ? 'hamburguer-menu-open' : 'hamburguer-menu'}>
+        <Header
+          className={collapsed ? "hamburguer-menu-open" : "hamburguer-menu"}
+        >
           <Button
             type="text"
             icon={collapsed ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />}
@@ -99,8 +93,9 @@ const App: React.FC = () => {
           className="menu"
           items={menuItems}
           onSelect={({ key }) => {
-            const selectedFeedItem = feeds.find((feed) => feed.id.toString() === key);
-            handleMenuSelect(key);
+            const selectedFeedItem = feeds.find(
+              (feed) => feed.id.toString() === key
+            );
             changeFeed(selectedFeedItem ? selectedFeedItem.contentGroup : []);
           }}
         />
@@ -108,12 +103,13 @@ const App: React.FC = () => {
 
       <Layout>
         <div className="spacer" />
-        <header className="logo-header"
-          onClick={() => handleMenuSelect('dashboard')}>
+        <header
+          className="logo-header"
+          onClick={() => handleMenuSelect("dashboard")}
+        >
           <Logo alt="Reaser Logo" />
         </header>
         <Content className="content">
-
           <NavControls
             collapsed={collapsed}
             onSearch={setSearchTerm}
@@ -123,9 +119,14 @@ const App: React.FC = () => {
           />
 
           <div className="content-display-container">
-            <div className="current-section">
-              You're visiting <span>{currentSection}</span> section.
-            </div>
+            {!(
+              selectedCategory === "dashboard" || selectedCategory === null
+            ) && (
+                <div className="current-section">
+                  You're visiting <span>{currentSection}</span> section.
+                </div>
+              )}
+
             <ContentDisplay
               {...{
                 savedPosts,
@@ -136,7 +137,8 @@ const App: React.FC = () => {
                 setTypeofPresentation,
                 feed: filteredPosts,
                 error,
-                loading
+                loading,
+                setCollapsed,
               }}
             />
           </div>

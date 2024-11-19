@@ -24,22 +24,22 @@ export const fetchRssFeedAsText = async (
     const isAtom = doc.getElementsByTagName("feed").length > 0;
     const isRss = doc.getElementsByTagName("rss").length > 0;
 
-    let feedTitle = "Sin título";
+    let feedtitle = "Sin título";
     let items: HTMLCollectionOf<Element> | Element[] = [];
 
     if (isAtom) {
-      const feedTitleElement = doc
+      const feedtitleElement = doc
         .getElementsByTagName("feed")[0]
         .getElementsByTagName("title")[0];
-      feedTitle = feedTitleElement
-        ? feedTitleElement.textContent || "Sin título"
+      feedtitle = feedtitleElement
+        ? feedtitleElement.textContent || "Sin título"
         : "Sin título";
       items = Array.from(doc.getElementsByTagName("entry"));
     } else if (isRss) {
       const channelElement = doc.getElementsByTagName("channel")[0];
-      const feedTitleElement = channelElement.getElementsByTagName("title")[0];
-      feedTitle = feedTitleElement
-        ? feedTitleElement.textContent || "Sin título"
+      const feedtitleElement = channelElement.getElementsByTagName("title")[0];
+      feedtitle = feedtitleElement
+        ? feedtitleElement.textContent || "Sin título"
         : "Sin título";
       items = Array.from(channelElement.getElementsByTagName("item"));
     } else {
@@ -90,7 +90,7 @@ export const fetchRssFeedAsText = async (
         id: uuidv4(),
         title,
         description,
-        feedTitle,
+        feedtitle,
         videoId,
         videoUrl,
         thumbnailUrl,
