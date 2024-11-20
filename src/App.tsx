@@ -14,6 +14,7 @@ import { useAppLogic } from "./hooks/useAppLogic";
 import ContentDisplay from "./components/ContentDisplay";
 import Logo from "./components/icons/Logo";
 import NavControls from "./components/NavControls";
+import DashboardDisplay from "./components/DashboardDisplay";
 
 const { Header, Content, Footer, Sider } = Layout;
 
@@ -126,21 +127,22 @@ const App: React.FC = () => {
                   You're visiting <span>{currentSection}</span> section.
                 </div>
               )}
-
-            <ContentDisplay
-              {...{
-                savedPosts,
-                handleSavePost,
-                currentPage,
-                setCurrentPage,
-                typeofPresentation,
-                setTypeofPresentation,
-                feed: filteredPosts,
-                error,
-                loading,
-                setCollapsed,
-              }}
-            />
+            {selectedCategory === "dashboard" ?
+              <DashboardDisplay /> :
+              <ContentDisplay
+                {...{
+                  savedPosts,
+                  handleSavePost,
+                  currentPage,
+                  setCurrentPage,
+                  typeofPresentation,
+                  setTypeofPresentation,
+                  feed: filteredPosts,
+                  error,
+                  loading,
+                  setCollapsed,
+                }}
+              />}
           </div>
         </Content>
         <Footer className="footer">

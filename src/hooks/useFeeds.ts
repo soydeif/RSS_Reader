@@ -1,4 +1,4 @@
-import { useState, useEffect, SetStateAction } from "react";
+import { useState, useEffect, SetStateAction, useCallback } from "react";
 
 interface ContentGroupItem {
   id: number;
@@ -69,5 +69,43 @@ export const useFeeds = () => {
     setSelectedFeed(feed);
   };
 
-  return { feeds, loading, error, selectedFeed, changeFeed };
+  const getDashboardContent = useCallback(() => {
+    const allNews = feeds.flatMap((feed) => feed.contentGroup);
+
+    const sortedNews = allNews.sort(
+      (a, b) =>
+        new Date(b.publishedat).getTime() - new Date(a.publishedat).getTime()
+    );
+
+    const featuredNews = sortedNews.slice(0, 5).map((item) => ({
+      id: item.id,
+      title: item.title,
+      summary: item.description || item.content,
+      image: item.imagesource,
+      source: item.author,
+      publishedAt: item.publishedat,
+      link: item.link || "",
+    }));
+
+    const localNews = sortedNews.slice(5, 10).map((item) => ({
+      id: item.id,
+      title: item.title,
+      summary: item.description || item.content,
+      image: item.imagesource,
+      source: item.author,
+      publishedAt: item.publishedat,
+      link: item.link || "",
+    }));
+
+    return { featuredNews, localNews };
+  }, [feeds]);
+
+  return {
+    feeds,
+    loading,
+    error,
+    selectedFeed,
+    changeFeed,
+    getDashboardContent,
+  };
 };

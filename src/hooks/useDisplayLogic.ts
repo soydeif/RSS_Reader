@@ -29,22 +29,65 @@ export const useDisplayLogic = () => {
 
   const pageSize = 5;
 
-  const modifyLinks = (html: string) => {
+  const modifyLinks = (
+    html: string,
+    returnAsText: boolean = false
+  ): React.ReactNode | string => {
     try {
-      const sanitizedHTML = DOMPurify.sanitize(html, {
+      let processedHTML = html;
+
+      if (
+        processedHTML.trim().startsWith("{") &&
+        processedHTML.trim().endsWith("}")
+      ) {
+        const parsed = JSON.parse(processedHTML);
+
+        if (parsed._) {
+          processedHTML = parsed._;
+        } else if (
+          parsed.$ &&
+          typeof parsed.$ === "object" &&
+          parsed.$.type === "html"
+        ) {
+          processedHTML = parsed._;
+        }
+      }
+
+      const sanitizedHTML = DOMPurify.sanitize(processedHTML, {
         USE_PROFILES: { html: true },
       });
-      return parse(sanitizedHTML, {
-        replace: (domNode) => {
-          if (domNode.type === "tag" && domNode.name === "a") {
-            domNode.attribs.target = "_blank";
-            domNode.attribs.rel = "noopener noreferrer";
-          }
-        },
+
+      const parser = new DOMParser();
+      const doc = parser.parseFromString(sanitizedHTML, "text/html");
+
+      const bodyText = doc.body.innerHTML;
+
+      if (
+        bodyText.includes("This article originally appeared on Engadget at")
+      ) {
+        doc.body.innerHTML = bodyText.replace(
+          /This article originally appeared on Engadget at.*?(<br>|<\/div>|$)/,
+          ""
+        );
+      }
+
+      doc.querySelectorAll("a").forEach((anchor) => {
+        const textContent = anchor.textContent || "";
+        anchor.replaceWith(textContent);
       });
+
+      doc.querySelectorAll("img").forEach((img) => img.remove());
+
+      if (returnAsText) {
+        return doc.body.textContent?.trim() || "";
+      }
+
+      const cleanedHTML = doc.body.innerHTML;
+
+      return parse(cleanedHTML);
     } catch (error) {
-      console.error("Error sanitizing HTML: ", error);
-      return html;
+      console.error("Error al procesar el HTML:", error);
+      return returnAsText ? "" : html;
     }
   };
 

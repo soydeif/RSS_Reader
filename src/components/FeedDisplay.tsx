@@ -64,6 +64,7 @@ const FeedDisplay: React.FC<FeedDisplayProps> = ({
     }
 
     const computedWidth = width[typeofPresentation] || width.list;
+
     const renderCompactView = () => {
 
         return (
@@ -241,7 +242,7 @@ const FeedDisplay: React.FC<FeedDisplayProps> = ({
                 </div>
 
                 <p className="post-description">
-                    {modifyLinks(selectedPost.content)}
+                    {selectedPost?.content ? modifyLinks(selectedPost.content) : "No content available."}
                 </p>
                 {selectedPost?.link && (
                     <a href={selectedPost.link} target="_blank" rel="noopener noreferrer" className="continue-reading">
