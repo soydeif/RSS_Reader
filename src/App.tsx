@@ -1,35 +1,161 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import React from "react";
+import "./reset.css";
+import "./global.css";
+import {
+  MenuFoldOutlined,
+  MenuUnfoldOutlined,
+  BookOutlined,
+  ProfileOutlined,
+  HomeOutlined,
+} from "@ant-design/icons";
+import { Layout, Button, Menu } from "antd";
 
-function App() {
-  const [count, setCount] = useState(0)
+import { useAppLogic } from "./hooks/useAppLogic";
+import ContentDisplay from "./components/ContentDisplay";
+import Logo from "./components/icons/Logo";
+import NavControls from "./components/NavControls";
+import DashboardDisplay from "./components/DashboardDisplay";
+
+const { Header, Content, Footer, Sider } = Layout;
+
+const App: React.FC = () => {
+  const {
+    collapsed,
+    setCollapsed,
+    savedPosts,
+    selectedCategory,
+    setSearchTerm,
+    typeofPresentation,
+    setTypeofPresentation,
+    handleMenuSelect,
+    currentSection,
+    handleSavePost,
+    currentPage,
+    setCurrentPage,
+    feeds,
+    filteredPosts,
+    changeFeed,
+    error,
+    loading,
+  } = useAppLogic();
+
+  const menuItems = [
+    {
+      key: "dashboard",
+      icon: <HomeOutlined />,
+      label: "Dashboard",
+      onClick: () => handleMenuSelect("dashboard"),
+    },
+    {
+      key: "Feeds",
+      icon: <ProfileOutlined />,
+      label: "Feeds",
+      children: feeds.map((feed) => ({
+        key: feed.id.toString(),
+        label: <span>{feed.feedtitle}</span>,
+        onClick: () => handleMenuSelect(feed.feedtitle),
+      })),
+    },
+    {
+      key: "saved",
+      icon: <BookOutlined />,
+      label: "Saved",
+      disabled: savedPosts.length === 0,
+      onClick: () => handleMenuSelect("saved"),
+    },
+  ];
 
   return (
-    <>
-      <div>
-        <a href="https://vitejs.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
-}
+    <Layout className="app-layout">
+      <Sider
+        trigger={null}
+        collapsible
+        collapsed={collapsed}
+        onBreakpoint={setCollapsed}
+        breakpoint="md"
+        collapsedWidth={1}
+        className="sider"
+      >
+        <Header
+          className={collapsed ? "hamburguer-menu-open" : "hamburguer-menu"}
+        >
+          <Button
+            type="text"
+            icon={collapsed ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />}
+            onClick={() => setCollapsed(!collapsed)}
+            className="collapse-button"
+          />
+        </Header>
 
-export default App
+        <Menu
+          theme="light"
+          mode="vertical"
+          selectedKeys={[selectedCategory || ""]}
+          className="menu"
+          items={menuItems}
+          onSelect={({ key }) => {
+            const selectedFeedItem = feeds.find(
+              (feed) => feed.id.toString() === key
+            );
+            changeFeed(selectedFeedItem ? selectedFeedItem.contentGroup : []);
+          }}
+        />
+      </Sider>
+
+      <Layout>
+        <div className="spacer" />
+        <header
+          className="logo-header"
+          onClick={() => handleMenuSelect("dashboard")}
+        >
+          <Logo alt="Reaser Logo" />
+        </header>
+        <Content className="content">
+          {!(
+            selectedCategory === "dashboard" || selectedCategory === null
+          ) && (
+              <NavControls
+                collapsed={collapsed}
+                onSearch={setSearchTerm}
+                typeofPresentation={typeofPresentation}
+                setTypeofPresentation={setTypeofPresentation}
+                small={currentSection.length > 1}
+              />
+            )}
+
+          <div className="content-display-container">
+            {!(
+              selectedCategory === "dashboard" || selectedCategory === null
+            ) && (
+                <div className="current-section">
+                  You're visiting <span>{currentSection}</span> section.
+                </div>
+              )}
+            {selectedCategory === "dashboard" ?
+              <DashboardDisplay /> :
+              <ContentDisplay
+                {...{
+                  savedPosts,
+                  handleSavePost,
+                  currentPage,
+                  setCurrentPage,
+                  typeofPresentation,
+                  setTypeofPresentation,
+                  feed: filteredPosts,
+                  error,
+                  loading,
+                  setCollapsed,
+                }}
+              />}
+          </div>
+        </Content>
+        <Footer className="footer">
+          Project {new Date().getFullYear()} <br />
+          <span className="footer-highlight">by David Diaz ☕</span>
+        </Footer>
+      </Layout>
+    </Layout>
+  );
+};
+
+export default App;
