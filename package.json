@@ -6,9 +6,9 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc -b && vite build",
-    "start": "npm run preview",
+    "start": "serve dist -s -n -L -p $PORT",
     "lint": "eslint .",
-    "preview": "vite preview"
+    "preview": "vite preview --port 5173"
   },
   "dependencies": {
     "@reduxjs/toolkit": "^2.2.8",
@@ -21,6 +21,7 @@
     "react-dom": "^18.3.1",
     "react-redux": "^9.1.2",
     "rss-to-json": "^2.1.1",
+    "serve": "^14.2.4",
     "uuid": "^10.0.0"
   },
   "devDependencies": {
