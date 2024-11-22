@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "tsc -b && vite build",
+    "build": "NODE_OPTIONS='--max-old-space-size=4096' tsc -b && vite build",
     "start": "serve dist -s -n -L -p $PORT",
     "lint": "eslint .",
     "preview": "vite preview --port 5173"
