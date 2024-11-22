@@ -8,7 +8,7 @@ const DashboardDisplay: React.FC = () => {
     const { modifyLinks, defaultImage } = useDisplayLogic();
 
     if (loading) {
-        return <Skeleton active paragraph={{ rows: 10 }} />;
+        return <Skeleton active paragraph={{ rows: 10 }} style={{ marginTop: '5rem' }} />;
     }
     if (error) {
         return <Alert message={error} type="error" showIcon />;

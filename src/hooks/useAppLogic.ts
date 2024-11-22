@@ -9,12 +9,14 @@ type PresentationType = "listCard" | "list";
 
 export const useAppLogic = () => {
   const [collapsed, setCollapsed] = useState(false);
-  const [currentSection, setCurrentSection] = useState("Dashboard");
+  const [currentSection, setCurrentSection] = useState("dashboard");
   const [savedPosts, setSavedPosts] = useState<FeedItemPost[]>(() => {
     const savedPostsFromStorage = localStorage.getItem("savedPosts");
     return savedPostsFromStorage ? JSON.parse(savedPostsFromStorage) : [];
   });
-  const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
+  const [selectedCategory, setSelectedCategory] = useState<string | null>(
+    currentSection
+  );
   const [viewSaved, setViewSaved] = useState(false);
   const [searchTerm, setSearchTerm] = useState<string>("");
   const [typeofPresentation, setTypeofPresentation] =

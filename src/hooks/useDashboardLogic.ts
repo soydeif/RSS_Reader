@@ -10,15 +10,20 @@ const useDashboardLogic = () => {
   const isValidImage = (image: string | null | undefined): boolean =>
     !!image && image.trim() !== "error";
 
-  const topStories = [
-    ...featuredNews.filter((item) => isValidImage(item.image)),
-    ...localNews.filter((item) => isValidImage(item.image)),
-  ];
+  const allNews = [...featuredNews, ...localNews];
 
-  const latestNews = [
-    ...featuredNews.filter((item) => !isValidImage(item.image)),
-    ...localNews.filter((item) => !isValidImage(item.image)),
-  ];
+  let newsWithImage = allNews.filter((item) => isValidImage(item.image));
+  let newsWithoutImage = allNews.filter((item) => !isValidImage(item.image));
+
+  if (newsWithoutImage.length === 0 && newsWithImage.length > 0) {
+    const numToMove = Math.min(3, newsWithImage.length);
+
+    newsWithoutImage = newsWithImage.slice(-numToMove);
+    newsWithImage = newsWithImage.slice(0, newsWithImage.length - numToMove);
+  }
+
+  const topStories = newsWithImage;
+  const latestNews = newsWithoutImage;
 
   const formatDate = () => {
     const options: Intl.DateTimeFormatOptions = {

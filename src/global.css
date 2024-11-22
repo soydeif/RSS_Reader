@@ -648,6 +648,7 @@ figcaption {
   width: 100%;
   height: 2.5rem;
   margin-top: 2rem;
+  position: relative;
 }
 
 .pagination-button {
@@ -742,6 +743,7 @@ figcaption {
   max-width: 1200px;
   margin: 0 auto;
   grid-auto-flow: dense; 
+  margin-top: 3rem;
 }
 .bento-column h2{
   font-size: 1.5rem;
@@ -776,7 +778,7 @@ figcaption {
 } 
 
 .featured-item:last-child{
-  grid-column: 1/-1;
+  grid-column: 2 / -1;
 }
 
 .featured-image,
@@ -827,7 +829,7 @@ figcaption {
     grid-template-columns: 1fr;
   }
 
-  .featured-item-featured {
+  .featured-item-featured, .featured-item:last-child {
     grid-column: span 1; 
   }
 }
