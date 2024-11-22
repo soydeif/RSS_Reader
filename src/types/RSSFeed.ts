@@ -100,3 +100,13 @@ export interface FeedDisplayProps {
   typeofPresentation: PresentationType;
   setCollapsed: (arg: boolean) => void;
 }
+
+export interface NewsItem {
+  id: number;
+  title: string;
+  summary: string;
+  image: string | null;
+  source: string;
+  publishedAt: string;
+  link: string;
+}

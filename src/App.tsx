@@ -111,13 +111,17 @@ const App: React.FC = () => {
           <Logo alt="Reaser Logo" />
         </header>
         <Content className="content">
-          <NavControls
-            collapsed={collapsed}
-            onSearch={setSearchTerm}
-            typeofPresentation={typeofPresentation}
-            setTypeofPresentation={setTypeofPresentation}
-            small={currentSection.length > 1}
-          />
+          {!(
+            selectedCategory === "dashboard" || selectedCategory === null
+          ) && (
+              <NavControls
+                collapsed={collapsed}
+                onSearch={setSearchTerm}
+                typeofPresentation={typeofPresentation}
+                setTypeofPresentation={setTypeofPresentation}
+                small={currentSection.length > 1}
+              />
+            )}
 
           <div className="content-display-container">
             {!(
