@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import { NewsItem } from "@/types/RSSFeed";
 import { useEffect, useState, useMemo } from "react";
 import { useFeeds } from "./useFeeds";
@@ -14,29 +15,62 @@ const useDashboardLogic = () => {
   });
 
   const { getDashboardContent, error } = useFeeds();
-  const [loading, setLoading] = useState(
-    featuredNews.length === 0 && localNews.length === 0
-  );
+  const [loading, setLoading] = useState(true);
 
   const isValidImage = (image: string | null | undefined): boolean =>
     !!image && image.trim() !== "error";
+
+  const fetchDataForDashboard = async () => {
+    try {
+      const { featuredNews: fetchedFeatured, localNews: fetchedLocal } =
+        getDashboardContent();
+
+      if (fetchedFeatured.length > 0) {
+        setFeaturedNews(fetchedFeatured);
+        sessionStorage.setItem("featuredNews", JSON.stringify(fetchedFeatured));
+      }
+
+      if (fetchedLocal.length > 0) {
+        setLocalNews(fetchedLocal);
+        sessionStorage.setItem("localNews", JSON.stringify(fetchedLocal));
+      }
+    } catch (error) {
+      console.error("Error fetching dashboard content:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    const cachedFeatured = sessionStorage.getItem("featuredNews");
+    const cachedLocal = sessionStorage.getItem("localNews");
+
+    const hasValidData =
+      cachedFeatured &&
+      cachedLocal &&
+      JSON.parse(cachedFeatured).length > 0 &&
+      JSON.parse(cachedLocal).length > 0;
+
+    if (!hasValidData) {
+      fetchDataForDashboard();
+    } else {
+      setLoading(false);
+    }
+  }, [getDashboardContent]);
 
   const allNews = useMemo(
     () => [...featuredNews, ...localNews],
     [featuredNews, localNews]
   );
 
-  let newsWithImage = allNews.filter((item) => isValidImage(item.image));
-  let newsWithoutImage = allNews.filter((item) => !isValidImage(item.image));
+  const newsWithImage = allNews.filter((item) => isValidImage(item.image));
+  const newsWithoutImage = allNews.filter((item) => !isValidImage(item.image));
 
-  if (newsWithoutImage.length === 0 && newsWithImage.length > 0) {
-    const numToMove = Math.min(3, newsWithImage.length);
-    newsWithoutImage = newsWithImage.slice(-numToMove);
-    newsWithImage = newsWithImage.slice(0, newsWithImage.length - numToMove);
-  }
-
-  const topStories = newsWithImage;
-  const latestNews = newsWithoutImage;
+  const topStories = newsWithImage.slice(
+    0,
+    Math.max(0, newsWithImage.length - 3)
+  );
+  const latestNews = newsWithImage.slice(-3).concat(newsWithoutImage);
 
   const formatDate = () => {
     const options: Intl.DateTimeFormatOptions = {
@@ -47,29 +81,12 @@ const useDashboardLogic = () => {
     return new Date().toLocaleDateString("en-US", options);
   };
 
-  useEffect(() => {
-    if (loading) {
-      const cachedFeatured = sessionStorage.getItem("featuredNews");
-      const cachedLocal = sessionStorage.getItem("localNews");
-
-      if (!cachedFeatured || !cachedLocal) {
-        const { featuredNews, localNews } = getDashboardContent();
-        setFeaturedNews(featuredNews);
-        setLocalNews(localNews);
-
-        sessionStorage.setItem("featuredNews", JSON.stringify(featuredNews));
-        sessionStorage.setItem("localNews", JSON.stringify(localNews));
-      }
-      setLoading(false);
-    }
-  }, [loading, getDashboardContent]);
-
   return {
-    error,
     loading,
     topStories,
     latestNews,
     formatDate,
+    error,
   };
 };
 
