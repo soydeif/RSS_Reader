@@ -100,37 +100,29 @@ export const useDisplayLogic = () => {
     return new Date(dateString).toLocaleDateString(undefined, options);
   };
 
-  const steps = [
-    ...(viewportType === "desktop"
+  const steps =
+    viewportType === "desktop"
       ? [
           {
             title: "Topics Sidebar",
-            description:
-              "Navigate through various categories using the sidebar. Click on the tags to discover articles tailored to your specific interests.",
+            description: "Navigate through various sections using the sidebar.",
             target: () => document.querySelector(".ant-menu") as HTMLElement,
           },
+          {
+            title: "Select View Type",
+            description:
+              "Choose how you would like the articles displayed on the page.",
+            target: () =>
+              document.querySelector(".style-view-btn-content") as HTMLElement,
+          },
+          {
+            title: "Access Content Details",
+            description:
+              "Click on any article to view more details about the selected content.",
+            target: () => document.querySelector(".rss-item") as HTMLElement,
+          },
         ]
-      : []),
-    {
-      title: "Search Bar",
-      description:
-        "Feel free to search for articles using keywords relevant to your interests.",
-      target: () => document.querySelector(".input-search") as HTMLElement,
-    },
-    {
-      title: "Select View Type",
-      description:
-        "Choose how you would like the articles displayed on the page.",
-      target: () =>
-        document.querySelector(".style-view-btn-content") as HTMLElement,
-    },
-    {
-      title: "Access Content Details",
-      description:
-        "Click on any article to view more details about the selected content.",
-      target: () => document.querySelector(".rss-item") as HTMLElement,
-    },
-  ];
+      : [];
 
   const handleTourClose = () => {
     setIsTourOpen(false);
