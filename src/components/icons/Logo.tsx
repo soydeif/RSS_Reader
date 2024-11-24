@@ -4,7 +4,7 @@ const Logo = (props: any) => {
     return (
         <svg
             {...props}
-            width="20rem" height="3rem" viewBox="0 0 89 30" fill="none">
+            width="20rem" height="5rem" viewBox="0 0 69 30" fill="none">
             <path d="M70.2498 26.875C71.4004 26.875 72.3332 25.9423 72.3332 24.7917C72.3332 23.6411 71.4004 22.7083 70.2498 22.7083C69.0992 22.7083 68.1665 23.6411 68.1665 24.7917C68.1665 25.9423 69.0992 26.875 70.2498 26.875Z" fill="#3673FE" />
             <path d="M69.2085 16.4583C71.6981 16.4583 74.0835 17.4479 75.8335 19.2083C77.5939 20.9583 78.5835 23.3438 78.5835 25.8333" stroke="#3673FE" strokeWidth="2.70833" strokeLinecap="round" strokeLinejoin="round" />
             <path d="M69.2085 9.16666C73.6252 9.16666 77.8647 10.9271 80.9897 14.0521C84.1147 17.1771 85.8752 21.4167 85.8752 25.8333" stroke="#3673FE" strokeWidth="2.70833" strokeLinecap="round" strokeLinejoin="round" />

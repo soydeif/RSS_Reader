@@ -60,10 +60,21 @@ export const useFeeds = () => {
   }, []);
 
   useEffect(() => {
-    if (feeds.length > 0 && selectedFeed.length === 0) {
-      setSelectedFeed(feeds[0].contentGroup);
+    const currentSection =
+      sessionStorage.getItem("currentSection") || "dashboard";
+
+    if (feeds.length > 0) {
+      const matchingFeed =
+        currentSection === "dashboard"
+          ? feeds[0].contentGroup
+          : feeds.find((feed) => feed.feedtitle === currentSection)
+              ?.contentGroup;
+
+      if (matchingFeed) {
+        setSelectedFeed(matchingFeed);
+      }
     }
-  }, [feeds, selectedFeed.length]);
+  }, [feeds]);
 
   const changeFeed = (feed: SetStateAction<ContentGroupItem[]>) => {
     setSelectedFeed(feed);

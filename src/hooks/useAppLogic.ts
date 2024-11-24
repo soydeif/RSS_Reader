@@ -9,7 +9,9 @@ type PresentationType = "listCard" | "list";
 
 export const useAppLogic = () => {
   const [collapsed, setCollapsed] = useState(false);
-  const [currentSection, setCurrentSection] = useState("dashboard");
+  const [currentSection, setCurrentSection] = useState(() => {
+    return sessionStorage.getItem("currentSection") || "dashboard";
+  });
   const [savedPosts, setSavedPosts] = useState<FeedItemPost[]>(() => {
     const savedPostsFromStorage = localStorage.getItem("savedPosts");
     return savedPostsFromStorage ? JSON.parse(savedPostsFromStorage) : [];
@@ -35,9 +37,17 @@ export const useAppLogic = () => {
       return "list";
     });
   const viewportType = useViewport();
-  const [currentPage, setCurrentPage] = useState(1);
+  const [currentPage, setCurrentPage] = useState(() => {
+    const storedPage = sessionStorage.getItem("currentPage");
+    return storedPage ? JSON.parse(storedPage) : 1;
+  });
 
   const { feeds, selectedFeed, changeFeed, error, loading } = useFeeds();
+
+  useEffect(() => {
+    sessionStorage.setItem("currentSection", currentSection);
+    sessionStorage.setItem("currentPage", JSON.stringify(currentPage));
+  }, [currentSection, currentPage]);
 
   useEffect(() => {
     localStorage.setItem("savedPosts", JSON.stringify(savedPosts));
@@ -65,10 +75,6 @@ export const useAppLogic = () => {
     });
   };
 
-  const handleCategorySelection = (categoryKey: string) => {
-    setCurrentPage(1);
-    setSelectedCategory(categoryKey);
-  };
   const filteredPosts = viewSaved
     ? savedPosts.filter((post) =>
         post.title.toLowerCase().includes(searchTerm.toLowerCase())
@@ -80,13 +86,17 @@ export const useAppLogic = () => {
   const handleMenuSelect = (key: string) => {
     setSearchTerm("");
     setCurrentPage(1);
-    setCurrentSection(key);
-    const isSavedView = key === "saved";
-    setViewSaved(isSavedView);
-    if (!isSavedView) {
-      const category = key === "dashboard" ? "dashboard" : key;
-      handleCategorySelection(category);
+
+    if (key === "saved") {
+      setViewSaved(true);
+      setSelectedCategory(null);
+      setCurrentSection("saved");
+    } else {
+      setViewSaved(false);
+      setSelectedCategory(key === "dashboard" ? "dashboard" : key);
+      setCurrentSection(key);
     }
+
     if (viewportType !== "desktop") {
       setCollapsed(!collapsed);
     }
@@ -110,5 +120,6 @@ export const useAppLogic = () => {
     changeFeed,
     error,
     loading,
+    viewportType,
   };
 };
