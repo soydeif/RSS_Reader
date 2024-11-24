@@ -1,6 +1,7 @@
-# RSS Reader
-![image](https://github.com/user-attachments/assets/e2a034e1-e39a-4a25-9084-b816ed14e901)
-**RSS Reader** is a Single Page Application (SPA) built with **React** and **TypeScript**. Its purpose is to provide an intuitive and user-friendly interface to browse, read, and manage RSS feed content efficiently.
+# REASER - Your RSS Reader
+![image](https://github.com/user-attachments/assets/d7ddd015-47d5-45eb-873a-c3a0dee69cbd)
+
+**REASER - RSS Reader** is a Single Page Application (SPA) built with **React** and **TypeScript**. Its purpose is to provide an intuitive and user-friendly interface to browse, read, and manage RSS feed content efficiently.
 
 ---
 
