@@ -110,5 +110,6 @@ export const useAppLogic = () => {
     changeFeed,
     error,
     loading,
+    viewportType,
   };
 };

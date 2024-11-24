@@ -1,4 +1,4 @@
-import React from "react";
+import React, { Suspense } from "react";
 import "./reset.css";
 import "./global.css";
 import {
@@ -8,13 +8,16 @@ import {
   ProfileOutlined,
   HomeOutlined,
 } from "@ant-design/icons";
-import { Layout, Button, Menu } from "antd";
+import { Layout, Button, Menu, Skeleton } from "antd";
 
 import { useAppLogic } from "./hooks/useAppLogic";
-import ContentDisplay from "./components/ContentDisplay";
+
 import Logo from "./components/icons/Logo";
 import NavControls from "./components/NavControls";
-import DashboardDisplay from "./components/DashboardDisplay";
+
+
+const DashboardDisplay = React.lazy(() => import("./components/DashboardDisplay"));
+const ContentDisplay = React.lazy(() => import("./components/ContentDisplay"));
 
 const { Header, Content, Footer, Sider } = Layout;
 
@@ -37,6 +40,7 @@ const App: React.FC = () => {
     changeFeed,
     error,
     loading,
+    viewportType
   } = useAppLogic();
 
   const menuItems = [
@@ -112,8 +116,9 @@ const App: React.FC = () => {
         </header>
         <Content className="content">
           {!(
-            selectedCategory === "dashboard" || selectedCategory === null
-          ) && (
+            selectedCategory === "dashboard" ||
+            selectedCategory === null
+          ) && viewportType === "desktop" && (
               <NavControls
                 collapsed={collapsed}
                 onSearch={setSearchTerm}
@@ -131,22 +136,26 @@ const App: React.FC = () => {
                   You're visiting <span>{currentSection}</span> section.
                 </div>
               )}
-            {selectedCategory === "dashboard" ?
-              <DashboardDisplay /> :
-              <ContentDisplay
-                {...{
-                  savedPosts,
-                  handleSavePost,
-                  currentPage,
-                  setCurrentPage,
-                  typeofPresentation,
-                  setTypeofPresentation,
-                  feed: filteredPosts,
-                  error,
-                  loading,
-                  setCollapsed,
-                }}
-              />}
+            <Suspense fallback={<Skeleton active paragraph={{ rows: 10 }} style={{ marginTop: '5rem' }} />}>
+              {selectedCategory === "dashboard" ? (
+                <DashboardDisplay />
+              ) : (
+                <ContentDisplay
+                  {...{
+                    savedPosts,
+                    handleSavePost,
+                    currentPage,
+                    setCurrentPage,
+                    typeofPresentation,
+                    setTypeofPresentation,
+                    feed: filteredPosts,
+                    error,
+                    loading,
+                    setCollapsed,
+                  }}
+                />
+              )}
+            </Suspense>
           </div>
         </Content>
         <Footer className="footer">

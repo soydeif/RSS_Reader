@@ -1,7 +1,11 @@
 {
   "compilerOptions": {
     "jsx": "react-jsx",
-    "target": "es6",
+    "target": "es2019",
+    "lib": [
+      "es2019",
+      "dom"
+    ],
     "module": "commonjs",
     "esModuleInterop": true,
     "skipLibCheck": true,
