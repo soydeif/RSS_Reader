@@ -4,8 +4,8 @@ import { Alert, Skeleton, Empty } from "antd";
 import NewsSection from "./NewsSection";
 
 const DashboardDisplay: React.FC = () => {
-    const { loading, error, latestNews, topStories, formatDate } = useDashboardLogic();
     const { modifyLinks, defaultImage } = useDisplayLogic();
+    const { loading, error, latestNews, topStories, formatDate } = useDashboardLogic();
 
     if (loading) {
         return <Skeleton active paragraph={{ rows: 10 }} style={{ marginTop: '5rem' }} />;
@@ -16,7 +16,6 @@ const DashboardDisplay: React.FC = () => {
 
     return (
         <>
-
             <div className="bento-grid">
                 <span className="dashboard-date">{formatDate()}</span>
                 {topStories.length > 0 || latestNews.length > 0 ? (

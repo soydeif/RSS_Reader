@@ -1,4 +1,4 @@
-import React, { Suspense } from "react";
+import React from "react";
 import "./reset.css";
 import "./global.css";
 import {
@@ -8,16 +8,14 @@ import {
   ProfileOutlined,
   HomeOutlined,
 } from "@ant-design/icons";
-import { Layout, Button, Menu, Skeleton } from "antd";
+import { Layout, Button, Menu } from "antd";
 
 import { useAppLogic } from "./hooks/useAppLogic";
 
 import Logo from "./components/icons/Logo";
 import NavControls from "./components/NavControls";
-
-
-const DashboardDisplay = React.lazy(() => import("./components/DashboardDisplay"));
-const ContentDisplay = React.lazy(() => import("./components/ContentDisplay"));
+import DashboardDisplay from "./components/DashboardDisplay";
+import ContentDisplay from "./components/ContentDisplay";
 
 const { Header, Content, Footer, Sider } = Layout;
 
@@ -115,10 +113,8 @@ const App: React.FC = () => {
           <Logo alt="Reaser Logo" />
         </header>
         <Content className="content">
-          {!(
-            selectedCategory === "dashboard" ||
-            selectedCategory === null
-          ) && viewportType === "desktop" && (
+          {(selectedCategory !== "dashboard" || selectedCategory === null) && viewportType === "desktop" &&
+            (
               <NavControls
                 collapsed={collapsed}
                 onSearch={setSearchTerm}
@@ -129,33 +125,30 @@ const App: React.FC = () => {
             )}
 
           <div className="content-display-container">
-            {!(
-              selectedCategory === "dashboard" || selectedCategory === null
-            ) && (
-                <div className="current-section">
-                  You're visiting <span>{currentSection}</span> section.
-                </div>
-              )}
-            <Suspense fallback={<Skeleton active paragraph={{ rows: 10 }} style={{ marginTop: '5rem' }} />}>
-              {selectedCategory === "dashboard" ? (
-                <DashboardDisplay />
-              ) : (
-                <ContentDisplay
-                  {...{
-                    savedPosts,
-                    handleSavePost,
-                    currentPage,
-                    setCurrentPage,
-                    typeofPresentation,
-                    setTypeofPresentation,
-                    feed: filteredPosts,
-                    error,
-                    loading,
-                    setCollapsed,
-                  }}
-                />
-              )}
-            </Suspense>
+            {(selectedCategory !== "dashboard" || selectedCategory === null) && (
+              <div className="current-section">
+                You're visiting <span>{currentSection}</span> section.
+              </div>
+            )}
+
+            {selectedCategory === "dashboard" ? (
+              <DashboardDisplay />
+            ) : (
+              <ContentDisplay
+                {...{
+                  savedPosts,
+                  handleSavePost,
+                  currentPage,
+                  setCurrentPage,
+                  typeofPresentation,
+                  setTypeofPresentation,
+                  feed: filteredPosts,
+                  error,
+                  loading,
+                  setCollapsed,
+                }}
+              />
+            )}
           </div>
         </Content>
         <Footer className="footer">
